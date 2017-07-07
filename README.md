@@ -6,7 +6,7 @@
 This project is still under development, so changes may occur suddenly.
 
 ### What you need
-To run "These are They", you need [SuperCollider] [http://supercollider.github.io/download.html]. You will also need to install SC3 Plugins, which can be found on the same download page (choose the package that is appropriate for your operating system). 
+To run "These are They", you need [SuperCollider](http://supercollider.github.io/download.html). You will also need to install SC3 Plugins, which can be found on the same download page (choose the package that is appropriate for your operating system). 
 
 Once SuperCollider and SC3 Plugins are installed, you'll need to add the Wavesets Quark. Open SuperCollider and enter
 
