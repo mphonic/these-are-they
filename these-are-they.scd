@@ -355,7 +355,7 @@ s.waitForBoot({
         CmdPeriod.run;
     };
 
-    w = Window.new('Untitled Automata', Rect(300, 600, 410, 70));
+    w = Window.new('These are They', Rect(300, 600, 410, 70));
     butt = Button(w, Rect(180, 20, 50, 30))
     .states_([
         ['Start', Color.black, Color.green],
