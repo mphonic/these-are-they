@@ -9,7 +9,7 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    ~numChans = 4;
+    ~numChans = 2;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
