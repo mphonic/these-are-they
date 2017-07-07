@@ -14,7 +14,7 @@ Once SuperCollider and SC3 Plugins are installed, you'll need to add the Waveset
 Quarks.gui
 ```
 
-To run this line of code, put the cursor on the same line as the code and hit Shift-Enter. A window will open with a list of available Quarks. Find Wavesets, like the + next to it, and then select "Reompile class library" at the top right of the window. You now have the necessary code to run "These are They".
+To run this line of code, put the cursor on the same line as the code and hit Shift-Enter. A window will open with a list of available Quarks. Find Wavesets, click the + next to it, and then select "Reompile class library" at the top right of the window. You now have the necessary code to run "These are They".
 
 To start the piece, open these-are-they.scd. Hit ctrl-enter, and you'll get a window with a start button. You can hit "Start" to begin, but nothing will really happen until you add audio.
 
@@ -36,7 +36,7 @@ First of all, keep all files and folders in their original structure, so that pa
 
 ```
 ~docDir = Document.current.dir;
-````
+```
 
 You can change it to
 
@@ -44,7 +44,7 @@ You can change it to
 ~docDir = "/absolute/path/to/these-are-they-folder";
 ```
 
-Shortly after that, you can define the number of output channels. Currently, 2 (stereo) or 4 (quad) are acceptable:
+Just below, you can define the number of output channels. Currently, 2 (stereo) or 4 (quad) are acceptable:
 
 ```
 ~numChans = 4; // quad output
