@@ -1,7 +1,7 @@
 # These are They
 ## A generative music project in SuperCollider
 
-"These are They" is an algorithmic "machine" that takes categorized sound files and enters them into a stew of transformations and interruptions. The files are not provided here, but there is an explanation of the categories below, so you can add your own and experiment.
+"These are They" is an algorithmic "machine" that takes categorized sound files and enters them into a stew of transformations and interruptions. The sound files are not provided here, but there is an explanation of the categories below, so you can add your own and experiment.
 
 This project is still under development, so changes may occur suddenly.
 
