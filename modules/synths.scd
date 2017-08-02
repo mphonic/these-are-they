@@ -197,7 +197,7 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
     smear = smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 2;
     Out.ar(out,
         Pan2.ar(
-            if(LFClipNoise.kr(LFNoise0.kr(0.3).exprange(0.2, 0.5), 0.5, 0.5).lag(0.1), Squiz.ar(sig, LFNoise1.kr(0.4).exprange(0.95, 1.4).squared, 1), smear),
+            if(LFClipNoise.kr(LFNoise0.kr(0.3).exprange(0.2, 0.5), 0.5, 0.5).lag(0.1), LeakDC.ar(Squiz.ar(sig, LFNoise1.kr(0.4).exprange(0.95, 1.4).squared.max(1), 1)), smear),
             pan,
             amp
         )
