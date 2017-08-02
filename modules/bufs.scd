@@ -40,12 +40,12 @@
 ];
 
 ~tatBufs.rec = Dictionary[
-    \recEngines -> Buffer.alloc(s, 48000 * 4, ~numChans),
-    \recChipper -> Buffer.alloc(s, 48000 * 4, 1),
-    \recTalkers -> Buffer.alloc(s, 48000 * 4, 1),
-    \recAll -> Buffer.alloc(s, 48000 * 4, ~numChans),
-    \waveset1 -> Buffer.alloc(s, 48000 * 4, 1),
-    \waveset2 -> Buffer.alloc(s, 48000 * 4, 1)
+    \recEngines -> Buffer.alloc(s, s.sampleRate * 4, ~numChans),
+    \recChipper -> Buffer.alloc(s, s.sampleRate * 4, 1),
+    \recTalkers -> Buffer.alloc(s, s.sampleRate * 4, 1),
+    \recAll -> Buffer.alloc(s, s.sampleRate * 4, ~numChans),
+    \waveset1 -> Buffer.alloc(s, s.sampleRate * 4, 1),
+    \waveset2 -> Buffer.alloc(s, s.sampleRate * 4, 1)
 ];
 
 ~tatBufs.sonks = (~docDir ++ "/audio/sonks/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.read(s, item) });

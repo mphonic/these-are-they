@@ -192,11 +192,12 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
     read = Phasor.ar(trigem, BufRateScale.kr(bufnum) * rate, 0, BufFrames.kr(bufnum), resetPos);
     LocalOut.ar(read);
     sig=DelayC.ar(BufRd.ar(1, bufnum, read, 1, 4), 0.067, 0.067) * (1 - trigem).lag(0.067);
-    // smear = Mix(PitchShift.ar(sig, pitchRatio: { Rand(-12, 12.0).midiratio }.dup(5), pitchDispersion: 0.005, timeDispersion: 0.0025, mul: 0.3));
-    smear = Mix(FreqShift.ar(sig, { ExpRand(20, 440.0) * TChoose.kr(Impulse.kr(0), [-1, 1]) }.dup(4), mul: 0.4));
+    // smear = Mix(FreqShift.ar(sig, { ExpRand(20, 440.0) * TChoose.kr(Impulse.kr(0), [-1, 1]) }.dup(4), mul: 0.4));
+    smear = SMS.ar(sig, noisefloor: 0.05, freqmult: LFNoise0.kr(0.2).range(-12, 12).midiratio, formantpreserve: 1);
+    smear = smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 2;
     Out.ar(out,
         Pan2.ar(
-            if(LFClipNoise.kr(LFNoise0.kr(0.3).exprange(0.2, 0.5), 0.5, 0.5).lag(0.1), sig, smear),
+            if(LFClipNoise.kr(LFNoise0.kr(0.3).exprange(0.3, 0.8), 0.5, 0.5).lag(0.1), Squiz.ar(sig, LFNoise1.kr(0.4).exprange(1, 1.6)), smear),
             pan,
             amp
         )
@@ -204,17 +205,25 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
 }).send(s);
 
 SynthDef(\saddy, {|rate=0.5, spread=1.0, bufnum=0, gate=0, spgate=0, amp=1, out=0|
-    var i, chain, n1, n2, o, e, sp;
+    var i, chain, cep, fftbuf, n1, n2, o, e, sp;
     e = EnvGen.kr(Env.asr(1.0, 1, 3), gate);
     sp = EnvGen.kr(Env.asr(1.0, 1, 3), spgate);
     i = LeakDC.ar(PlayBuf.ar(2, bufnum, BufRateScale.kr(bufnum) * rate.lag(0.2) * sp, loop: 1));
     n1 = LFBrownNoise1.kr(1, 0.3, 1);
     n2 = LFBrownNoise1.kr(1, 0.3, 1);
-    i = Splay.ar(DelayC.ar(PitchShift.ar(i * amp.lag(1), 0.2, n1.lincurve(-1.0, 1.0, 1, [0.69, 0.55], 2), timeDispersion: { ExpRand(0.001, 0.005) }.dup), 0.125, Array.rand(2, 0.02, 0.125) * n1.range(0, 1.0).squared), spread) * n2.range(0.4, 1).squared;
-    chain = FFT({ LocalBuf(2048, 1) }.dup, i);
-    chain = PV_MagSmear(chain, n1.exprange(0.2, 30));
+    //i = [SMS.ar(i[0], freqmult: n1.lincurve(-1.0, 1.0, 1, 0.69, 2), useifft: 1)[0], SMS.ar(i[1], freqmult: n1.lincurve(-1.0, 1.0, 1, 0.55, 2), useifft: 1)[0]];
+
+    i = Splay.ar(DelayC.ar(PitchShift.ar(i * amp.lag(1), 0.2, n1.lincurve(-1.0, 1.0, 1, [0.69, 0.55], 2), timeDispersion: { ExpRand(0.001, 0.005) }.dup), 0.125, { Rand(0.02, 0.125) }.dup * n1.range(0, 1.0).squared), spread) * n2.range(0.4, 1).squared;
+    //i = Splay.ar(DelayC.ar(i, 0.125, { Rand(0.02, 0.125) }.dup * n1.range(0, 1.0).squared), spread);
+    fftbuf = { LocalBuf(2048, 1) }.dup;
+    chain = FFT(fftbuf, i);
+    cep = Cepstrum({ LocalBuf(1024, 1) }.dup, chain);
+    //cep = PV_BinShift(cep, 1, n1.lincurve(-1.0, 1.0, 0, [-4, -4.5], 2), 1);
+    cep = PV_MagSmear(cep, n1.exprange(0.2, 30));
+    chain = ICepstrum(cep, fftbuf);
     o = IFFT(chain);
     o = o.softclip * e;
+    //o = Splay.ar(DelayC.ar(o, 0.125, { Rand(0.02, 0.125) }.dup * n1.range(0, 1.0).squared), spread) * n2.range(0.4, 1).squared;
     Out.ar(out, PanAz.ar(~numChans, o[0], LFNoise2.kr(0.2).range(-0.3, -0.6)) + PanAz.ar(~numChans, o[1], LFNoise2.kr(0.2).range(0.3, 0.6)));
 }).send(s);
 
