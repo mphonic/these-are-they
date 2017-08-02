@@ -2,7 +2,7 @@
 s.options.numInputBusChannels = 18;
 s.options.numOutputBusChannels = 18;
 s.options.memSize = 524288;
-s.options.sampleRate = 48000;
+s.options.sampleRate = 44100;
 s.options.zeroConf = false;
 s.options.device = "ASIO : ASIO Fireface USB";
 s.waitForBoot({
@@ -67,8 +67,8 @@ s.waitForBoot({
         synths = Dictionary[
             \record -> Synth(\recordIt, [\recBuf, ~tatBufs.rec[\recAll].bufnum]),
             \uncommon -> Synth(\uncommon, [\out, outs[\talker], \recBuf, ~tatBufs.rec[\recTalkers].bufnum]),
-            \sticker1 -> Synth(\bufSticker, [\bufnum, streams[\talkers].next.bufnum, \rate, 0.92, \out, outs[\sticker1]]),
-            \sticker2 -> Synth(\bufSticker, [\bufnum, streams[\talkers].next.bufnum, \rate, 0.6, \amp, 0.8, \out, outs[\sticker2]]),
+            \sticker1 -> Synth(\bufSticker, [\bufnum, streams[\talkers].next.bufnum, \rate, 0.95, \out, outs[\sticker1]]),
+            \sticker2 -> Synth(\bufSticker, [\bufnum, streams[\talkers].next.bufnum, \rate, 0.8, \amp, 0.8, \out, outs[\sticker2]]),
             \engine -> Synth([\talkyVosc, \chopTalk].choose, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]),
             \wavesource -> Synth(\talkySquid, [\recBuf, ~tatBufs.rec[\recChipper].bufnum, \shapeBuf, ~tatBufs.distort[1].bufnum]),
             \wavesourceName -> \talkySquid,
@@ -246,7 +246,7 @@ s.waitForBoot({
                             {
                                 waitit.wait;
                                 synths[\sticker1].set(\rate, rrand(0.85, 1.0));
-                                synths[\sticker2].set(\rate, rrand(0.5, 0.84));
+                                synths[\sticker2].set(\rate, rrand(0.7, 0.85));
                                 (0.5.coin && ~lude.ludeing.not).if({
                                     synths[\engine].free;
                                     synths[\engine] = Synth([\talkyVosc, \chopTalk].wchoose([0.6, 0.4]), [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
@@ -295,8 +295,8 @@ s.waitForBoot({
                                 // wait and then turn stuff back on
                                 {
                                     waittime.wait;
-                                    synths[\sticker1].set(\rate, rrand(0.7, 1.0));
-                                    synths[\sticker2].set(\rate, rrand(0.38, 0.5));
+                                    synths[\sticker1].set(\rate, rrand(0.85, 1.0));
+                                    synths[\sticker2].set(\rate, rrand(0.7, 0.85));
                                     synths[\record].set(\run, 0);
                                     (~lude.ludeing.not).if({
                                         synths[\engine].run(true);

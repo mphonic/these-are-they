@@ -49,7 +49,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         trig=Dust.kr(chop_depth.linexp(0.0,1.0,1.9,8.2));
         wup=Select.kr(chsel,[TExpRand.kr(0.01, 0.175, trig: trig),TExpRand.kr(0.01, 0.086, trig: trig),TExpRand.kr(0.02, 0.03, trig: trig).ring1(amp * 0.5)]);
         squaryness=TBrownRand.kr(0.1, 1.22, 0.5, trig: Dust.kr(4 * 1.8125)).min(1.0);
-        sig=LeakDC.ar(Fhn2DL.ar(36000, 48000,
+        sig=LeakDC.ar(Fhn2DL.ar(33075, 48000,
             wup,
             wup * Select.kr(chsel,[freq.linlin(1,0.0,0.1,1.0),freq.linlin(1,0.0,0.25,1.0),freq.linlin(1,0.0,0.9,1.0)]),
             Select.kr(chsel,[amp.linexp(1,0.0,0.1, 0.5),amp.linexp(1,0.0,0.4, 0.5),amp.linexp(1,0.0,0.65, 0.75)]),
@@ -106,7 +106,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         trig=Dust.kr(chop_depth.linexp(0.0,1.0,1.9,8.2));
         wup=Select.kr(chsel,[TExpRand.kr(0.01, 0.175, trig: trig),TExpRand.kr(0.01, 0.086, trig: trig),TExpRand.kr(0.02, 0.03, trig: trig).ring1(amp * 0.5)]);
         squaryness=TBrownRand.kr(0.1, 1.22, 0.5, trig: Dust.kr(4 * 1.8125)).min(1.0);
-        sig=LeakDC.ar(Fhn2DL.ar(36000, 48000,
+        sig=LeakDC.ar(Fhn2DL.ar(33075, 48000,
             wup,
             wup * Select.kr(chsel,[freq.linlin(1,0.0,0.1,1.0),freq.linlin(1,0.0,0.25,1.0),freq.linlin(1,0.0,0.9,1.0)]),
             Select.kr(chsel,[amp.linexp(1,0.0,0.1, 0.5),amp.linexp(1,0.0,0.4, 0.5),amp.linexp(1,0.0,0.65, 0.75)]),
@@ -124,7 +124,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         Out.ar(out, Splay.ar(sig, LFNoise2.kr(0.5).range(0, 1)));
     }).send(s);
 
-        SynthDef(\uncommon, {|in1 = 32, in2 = 36, amp = 1, recBuf = 0, out = 0|
+    SynthDef(\uncommon, {|in1 = 32, in2 = 36, amp = 1, recBuf = 0, out = 0|
         var i1, i2, chain1, chain2, chain;
         i1 = In.ar(in1, ~numChans) * 2;
         i2 = In.ar(in2, ~numChans);
@@ -134,7 +134,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01);
         chain1 = FFT({LocalBuf(1024)}.dup(~numChans), DelayN.ar(i1, 0.3333, 0.3333));
         chain2 = FFT({LocalBuf(1024)}.dup(~numChans), i2);
-        chain = PV_Morph(chain2, chain1, LFNoise2.kr(0.5, 0.5, 0.05).max(0.01).squared);
+        chain = PV_XFade(chain2, chain1, LFNoise2.kr(0.5, 0.5, 0.05).max(0.01).squared);
         Out.ar(out, IFFT(chain) * amp.lag(0.1));
     }).send(s);
 });
@@ -197,7 +197,7 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
     smear = smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 2;
     Out.ar(out,
         Pan2.ar(
-            if(LFClipNoise.kr(LFNoise0.kr(0.3).exprange(0.3, 0.8), 0.5, 0.5).lag(0.1), Squiz.ar(sig, LFNoise1.kr(0.4).exprange(1, 1.6)), smear),
+            if(LFClipNoise.kr(LFNoise0.kr(0.3).exprange(0.2, 0.5), 0.5, 0.5).lag(0.1), Squiz.ar(sig, LFNoise1.kr(0.4).exprange(0.95, 1.4).squared, 1), smear),
             pan,
             amp
         )
@@ -255,7 +255,7 @@ SynthDef(\bitOBuf, {|out = 0, buf, modfreq, modstart, modend, rates = #[0,0,0,0]
         BufRd.ar(1, buf,
             Phasor.ar(0, (rates[i]).ring1(amod) * BufRateScale.kr(buf) * TWChoose.kr(Impulse.kr((dur + 3).reciprocal), [env, 1], [0.1, 0.9]), starts[i], ends[i])) * 0.45
     }).ring1(amod) * Rand(0.83, 0.975).squared * amp;
-    sig = LeakDC.ar(Shaper.ar(shapeBuf, sig));
+    sig = LeakDC.ar(Shaper.ar(shapeBuf, LeakDC.ar(sig)));
     Out.ar(out, PanAz.ar(~numChans, sig * env, Rand(-1.0, 1.0), 0.7).softclip);
 }).send(s);
 

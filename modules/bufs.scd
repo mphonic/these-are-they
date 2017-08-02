@@ -1,26 +1,5 @@
 ~tatBufs = Environment.new;
 ~tatBufs.know = true;
-~tatBufs.vosc = [
-    Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
-        var n, a;
-        n = i + 1;
-        a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (0.3.coin).if({ 0.9.rand.squared }) }) });
-        buf.sine1Msg(a);
-    }),
-    Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
-        var n, a;
-        n = i+1;
-        a = Array.fill(n, { arg j; (j == 0).if({ 0.9.rand.squared }, { (j % 2 == 0).if({ (j + 1).reciprocal }, { 0 }) });  });
-        buf.sine1Msg(a);
-})];
-~tatBufs.remakeVosc = {
-    ~tatBufs.vosc[0].do({|e, i|
-        var n, a;
-        n = i + 1;
-        a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (0.3.coin).if({ 0.9.rand.squared }) }) });
-        e.sine1Msg(a);
-    });
-};
 ~tatBufs.distort = [
     Buffer.alloc(s, 2048, 1, {|buf|
         buf.chebyMsg(Array.fill(64, {|i| (i % 2 == 0).if({ (i + 1).squared.reciprocal }, { 0.5.rand / (i + 1).squared }) }))
@@ -57,3 +36,25 @@
 ~tatBufs.bombas = (~docDir ++ "/audio/bombas/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.cueSoundFile(s, item, bufferSize: 262144) });
 
 ~tatBufs.chipPaths = (~docDir ++ "/audio/chips/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]});
+
+~tatBufs.vosc = [
+    Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
+        var n, a;
+        n = i + 1;
+        a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (0.3.coin).if({ 0.9.rand.squared }) }) });
+        buf.sine1Msg(a);
+    }),
+    Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
+        var n, a;
+        n = i+1;
+        a = Array.fill(n, { arg j; (j == 0).if({ 0.9.rand.squared }, { (j % 2 == 0).if({ (j + 1).reciprocal }, { 0 }) });  });
+        buf.sine1Msg(a);
+})];
+~tatBufs.remakeVosc = {
+    ~tatBufs.vosc[0].do({|e, i|
+        var n, a;
+        n = i + 1;
+        a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (0.3.coin).if({ 0.9.rand.squared }) }) });
+        e.sine1Msg(a);
+    });
+};

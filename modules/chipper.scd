@@ -58,7 +58,7 @@
                                 \panAmt, 0.4.rand,
                                 \panModSpeed, exprand(0.1, 1.0),
                                 \pos, rrand(0.0, 1.0),
-                                \amp, rrand(0.5,0.9).squared
+                                \amp, rrand(0.3,0.7).squared
                             ]
                         );
                     });
