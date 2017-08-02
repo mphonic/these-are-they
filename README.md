@@ -1,12 +1,12 @@
 # These are They
 ## A generative music project in SuperCollider
 
-"These are They" is an algorithmic "machine" that takes categorized sound files and enters them into a stew of transformations and interruptions. The files are not provided here, but there is an explanation of the categories below, so you can add your own and experiment.
+"These are They" is an algorithmic "machine" that takes categorized sound files and enters them into a stew of transformations and interruptions. The sound files are not provided here, but there is an explanation of the categories below, so you can add your own and experiment.
 
 This project is still under development, so changes may occur suddenly.
 
 ### What you need
-To run "These are They", you need [SuperCollider] [http://supercollider.github.io/download.html]. You will also need to install SC3 Plugins, which can be found on the same download page (choose the package that is appropriate for your operating system). 
+To run "These are They", you need [SuperCollider](http://supercollider.github.io/download.html). You will also need to install SC3 Plugins, which can be found on the same download page (choose the package that is appropriate for your operating system). 
 
 Once SuperCollider and SC3 Plugins are installed, you'll need to add the Wavesets Quark. Open SuperCollider and enter
 
@@ -14,7 +14,7 @@ Once SuperCollider and SC3 Plugins are installed, you'll need to add the Waveset
 Quarks.gui
 ```
 
-To run this line of code, put the cursor on the same line as the code and hit Shift-Enter. A window will open with a list of available Quarks. Find Wavesets, like the + next to it, and then select "Reompile class library" at the top right of the window. You now have the necessary code to run "These are They".
+To run this line of code, put the cursor on the same line as the code and hit Shift-Enter. A window will open with a list of available Quarks. Find Wavesets, click the + next to it, and then select "Reompile class library" at the top right of the window. You now have the necessary code to run "These are They".
 
 To start the piece, open these-are-they.scd. Hit ctrl-enter, and you'll get a window with a start button. You can hit "Start" to begin, but nothing will really happen until you add audio.
 
@@ -36,7 +36,7 @@ First of all, keep all files and folders in their original structure, so that pa
 
 ```
 ~docDir = Document.current.dir;
-````
+```
 
 You can change it to
 
@@ -44,7 +44,7 @@ You can change it to
 ~docDir = "/absolute/path/to/these-are-they-folder";
 ```
 
-Shortly after that, you can define the number of output channels. Currently, 2 (stereo) or 4 (quad) are acceptable:
+Just below, you can define the number of output channels. Currently, 2 (stereo) or 4 (quad) are acceptable:
 
 ```
 ~numChans = 4; // quad output
