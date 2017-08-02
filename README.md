@@ -19,7 +19,7 @@ To run this line of code, put the cursor on the same line as the code and hit Sh
 To start the piece, open these-are-they.scd. Hit ctrl-enter, and you'll get a window with a start button. You can hit "Start" to begin, but nothing will really happen until you add audio.
 
 ### Adding Audio
-In the project directory, you'll need to create an audio folder with five subfolders: bombas, chips, ludes, sonks, and talkers (names are case-sensitive). The files you put in each of those folders will have different functions and transformations within the piece. Below is an explanation of how files in each folder function. The files themselves should be uncompressed (wav or aiff). They can have any sample rate and bit depth, but, by default, the piece runs at 48k (files will be resampled appropriately). Files in bombas, ludes, and sonks should be stereo, interleaved. Files in chips and talkers can either be stereo or mono (only the left channel will be used in talkers).
+In the project directory, you'll need to create an audio folder with five subfolders: bombas, chips, ludes, sonks, and talkers (names are case-sensitive). The files you put in each of those folders will have different functions and transformations within the piece. Below is an explanation of how files in each folder function. The files themselves should be uncompressed (wav or aiff). They can have any sample rate and bit depth, but, by default, the piece runs at 44.1k (files will be resampled appropriately). Files in bombas, ludes, and sonks should be stereo, interleaved. Files in chips and talkers can either be stereo or mono (only the left channel will be used in talkers).
 
 bombas -> The piece periodically reaches a threshold where there's something of an explosion, or at least a wiggly moment. Every so often, that wiggly moment is replaced by files in the bombas folder: two played at the same time, marginally detuned, in the order they appear in the folder. These are relatively rare moments but can be generally striking.
 
@@ -29,7 +29,7 @@ ludes -> These are interludes. They get played as-is after a certain amount of e
 
 sonks -> These are meant to be lush, dramatic pieces that usually appear blurred, detuned, and slowed down. Sometimes, however, they come into focus. Often, you don't hear them as long, uninterrupted segments, but there are exceptions. 
 
-talkers -> The original intent was that these would be recordings of talking, though there's no reason why they couldn't be something else entirely. These files are played back at normal speed or slower, and two are always being played at the same time. They alternate between dry and frequency-shifted, and they are periodically "stuttered" in '80s sampler fashion.
+talkers -> The original intent was that these would be recordings of talking, though there's no reason why they couldn't be something else entirely. These files are played back at normal speed or slower, and two are always being played at the same time. They alternate between dry, roughly pitched up, and spectrally altered, and they are periodically "stuttered" in '80s sampler fashion.
 
 ### Basic Modifications
 First of all, keep all files and folders in their original structure, so that paths aren't broken. If you get an error dealing with buffers being empty or Document.current being undefined, you may have to modify a line near the top of the code:
