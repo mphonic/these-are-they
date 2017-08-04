@@ -18,6 +18,8 @@
     });
 ];
 
+s.sync;
+
 ~tatBufs.rec = Dictionary[
     \recEngines -> Buffer.alloc(s, s.sampleRate * 4, ~numChans),
     \recChipper -> Buffer.alloc(s, s.sampleRate * 4, 1),
@@ -33,9 +35,11 @@
 
 ~tatBufs.ludes = (~docDir ++ "/audio/ludes/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.cueSoundFile(s, item, bufferSize: 524288); });
 
-~tatBufs.bombas = (~docDir ++ "/audio/bombas/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.cueSoundFile(s, item, bufferSize: 262144) });
+~tatBufs.bombas = (~docDir ++ "/audio/bombas/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).sort.collect({|item, i| Buffer.cueSoundFile(s, item, bufferSize: 262144) });
 
 ~tatBufs.chipPaths = (~docDir ++ "/audio/chips/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]});
+
+s.sync;
 
 ~tatBufs.vosc = [
     Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
