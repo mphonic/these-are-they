@@ -9,8 +9,8 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    //~numChans = 2;
-    ~numChans = 4;
+    ~numChans = 2;
+    //~numChans = 4;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
@@ -37,7 +37,7 @@ s.waitForBoot({
         "Off we go".postln;
 
         // output busses for the synths
-/*        outs = Dictionary[
+        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -50,23 +50,23 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];*/
+        ];
 
         // output busses if you're doing some external mixing, for instance
-        outs = Dictionary[
-        \saddy -> 4,
-        \foire -> 8,
-        \spitter -> 8,
-        \chipper -> 12,
-        \talker -> 0,
-        \lude -> 0,
-        \mouth -> 0,
-        // these have internal routing, so just be aware of where you're sending them
-        \sticker1 -> 36,
-        \sticker2 -> 38,
-        \engine -> 32,
-        \bomba -> 56
-        ];
+/*        outs = Dictionary[
+            \saddy -> 4,
+            \foire -> 8,
+            \spitter -> 8,
+            \chipper -> 12,
+            \talker -> 0,
+            \lude -> 0,
+            \mouth -> 0,
+            // these have internal routing, so just be aware of where you're sending them
+            \sticker1 -> 36,
+            \sticker2 -> 38,
+            \engine -> 32,
+            \bomba -> 56
+        ];*/
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
@@ -183,7 +183,7 @@ s.waitForBoot({
                 }.fork;
                 // restart and reset things when the lude is done
                 {
-                    (x.duration * rrand(1, 1.02)).wait;
+                    (x.duration * rrand(1, 1.013)).wait;
                     self.ludeing = false;
                     ~chipper.resetPathStream(~tatBufs.chipPaths);
                     synths[\engine] = Synth(\talkyVosc, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
