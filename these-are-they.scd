@@ -9,7 +9,8 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    ~numChans = 2;
+    //~numChans = 2;
+    ~numChans = 4;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
@@ -36,7 +37,7 @@ s.waitForBoot({
         "Off we go".postln;
 
         // output busses for the synths
-        outs = Dictionary[
+/*        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -49,7 +50,24 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
+        ];*/
+
+        // output busses if you're doing some external mixing, for instance
+        outs = Dictionary[
+        \saddy -> 4,
+        \foire -> 8,
+        \spitter -> 8,
+        \chipper -> 12,
+        \talker -> 0,
+        \lude -> 0,
+        \mouth -> 0,
+        // these have internal routing, so just be aware of where you're sending them
+        \sticker1 -> 36,
+        \sticker2 -> 38,
+        \engine -> 32,
+        \bomba -> 56
         ];
+
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
         });
@@ -155,9 +173,13 @@ s.waitForBoot({
                     synths[\engine].free;
                     synths[\sonk].set(\amp, 0, \spread, rrand(0.67, 0.87));
                     ~tatBufs.remakeVosc.value();
+                    synths[\uncommon].run(false);
+                    synths[\sticker1].run(false);
+                    synths[\sticker2].run(false);
                     rrand(0, 8.0).wait;
                     // silence the inner wavesource to stop chips
                     synths[\wavesource].run(false);
+                    synths[\sonk].run(false);
                 }.fork;
                 // restart and reset things when the lude is done
                 {
@@ -166,6 +188,10 @@ s.waitForBoot({
                     ~chipper.resetPathStream(~tatBufs.chipPaths);
                     synths[\engine] = Synth(\talkyVosc, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
                     synths[\wavesource].run(true);
+                    synths[\sticker1].run(true);
+                    synths[\sticker2].run(true);
+                    synths[\uncommon].run(true);
+                    synths[\sonk].run(true);
                     synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum);
                     b.free;
                     holdIt = false;
@@ -276,7 +302,7 @@ s.waitForBoot({
                                     }.fork;
                                 }, {
                                     // going to foire
-                                    waittime = ~foire.go(4, 16, irritation * 1.9, irritation * 20);
+                                    waittime = ~foire.go(2 * ~numChans, 8 * ~numChans, irritation * 1.9, irritation * 20);
                                     // maybe mouths too
                                     /*(0.25.coin).if({
                                         ~mouths.go(rrand(2, 4), waittime * 0.3, waittime * 0.9);
