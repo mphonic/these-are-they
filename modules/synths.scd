@@ -176,7 +176,7 @@ SynthDef(\offOnSite, {|amp=0.9, mute=0, recBuf=0, shapeBuf=1, out=101|
 		shapeBuf,
 		sig
 	));
-    amp = amp * TWChoose.kr(ft4, [0, 1], [0.15, 0.85]);
+    amp = amp * TWChoose.kr(ft4, [0, 1], [0.17, 0.83]);
 	RecordBuf.ar(sig * 0.55, recBuf, loop: 1);
 	//#pitch, hasFreq = Pitch.kr(sig, minFreq: 40);
     SendTrig.kr(Amplitude.kr(sig * amp.lag(0.067), 0.1, 0.1) < 0.00005, 1001, 0);

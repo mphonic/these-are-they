@@ -11,7 +11,7 @@
     ~requests = 0;
     ~threshold = 10;
     ~resetThresholds = {|self|
-        self.threshold = [rrand(47,70), rrand(297, 520)].wchoose([0.98, 0.02]);
+        self.threshold = [rrand(47,67), rrand(90, 150)].wchoose([0.98, 0.02]);
         self.requests = 0;
     };
     ~increment = {|self|

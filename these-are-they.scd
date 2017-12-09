@@ -9,8 +9,8 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    ~numChans = 2;
-    //~numChans = 4;
+    //~numChans = 2;
+    ~numChans = 4;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
@@ -37,7 +37,7 @@ s.waitForBoot({
         "Off we go".postln;
 
         // output busses for the synths
-        outs = Dictionary[
+/*        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -50,10 +50,10 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];
+        ];*/
 
         // output busses if you're doing some external mixing, for instance
-/*        outs = Dictionary[
+        outs = Dictionary[
             \saddy -> 4,
             \foire -> 8,
             \spitter -> 8,
@@ -66,7 +66,7 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];*/
+        ];
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
@@ -146,7 +146,7 @@ s.waitForBoot({
         // chipper is a system for launching bursts of short samples
         ~chipper.out = outs[\chipper];
         ~chipper.resetPathStream(~tatBufs.chipPaths);
-        ~chipper.threshold = rrand(100, 200);
+        ~chipper.threshold = rrand(50, 81);
         /*~chipper.bufSynthMono = \bufbuf1;
         ~chipper.bufSynthStereo = \bufbuf2;*/
 
@@ -154,7 +154,7 @@ s.waitForBoot({
         ~lude = Environment.new;
         ~lude.know = true;
         ~lude.out = outs[\lude];
-        ~lude.bufStream = Pseq(~tatBufs.ludes.scramble, inf).asStream;
+        ~lude.bufStream = Pseq(~tatBufs.ludes, inf).asStream;
         ~lude.ludeing = false;
         ~lude.go = {|self|
             var b;
@@ -209,7 +209,7 @@ s.waitForBoot({
                 t = EnvGen.kr(Env([0, 1, 1, 0], [1, durations.maxItem * rrand(1.2, 1.5), 0.067]), doneAction: 2);
                 sig = Array.fill(2, {|c|
                     var v;
-                    v=VDiskIn.ar(2, bufs[c], rrand(0.85, 1.0).ring1(EnvGen.kr(Env([rrand(1.5,2.5),0.0],[rrand(0.75, 1.25)],[rrand(-4,-1)]))), loop: 1) * rrand(0.9, 1.0);
+                    v=VDiskIn.ar(2, bufs[c], rrand(0.85, 1.0).ring1(EnvGen.kr(Env([rrand(1.5,2.5),0.0],[rrand(0.75, 1.25)],[rrand(-4,-1)]))), loop: 1);
                     (c.odd).if({
                         v = v.reverse;
                     });
@@ -329,7 +329,7 @@ s.waitForBoot({
                                         synths[\sonk].set(\gate, 1, \spgate, 1, \spread, rrand(0.67, 0.87));
                                     });
                                     // maybe change the wavesource
-                                    (0.3.coin).if({
+                                    (0.3333.coin).if({
                                         var newSynth = [\talkySquid, \offOnSite].choose;
                                         (newSynth != synths[\wavesourceName]).if({
                                             synths[\wavesource].free;
