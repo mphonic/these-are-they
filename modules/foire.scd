@@ -1,5 +1,5 @@
 ~foire = Environment.make({
-    ~threshold = rrand(10, 13);
+    ~threshold = rrand(8, 11);
     ~foiring = List.new;
     ~didUnison = 0;
     ~numFoired = 0;
@@ -11,10 +11,10 @@
     ~incrementNumFoired = {|self|
         self.numFoired = self.numFoired + 1;
     };
-    ~resetThreshold = {|self, min=10, max=13|
+    ~resetThreshold = {|self, min=8, max=11|
         self.threshold = rrand(min, max);
     };
-    ~resetCounts = {|self, min=10, max=13|
+    ~resetCounts = {|self, min=8, max=11|
         self.numFoired = 0;
         self.resetThreshold(min, max);
     };

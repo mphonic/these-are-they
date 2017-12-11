@@ -176,10 +176,10 @@ SynthDef(\offOnSite, {|amp=0.9, mute=0, recBuf=0, shapeBuf=1, out=101|
 		shapeBuf,
 		sig
 	));
-    amp = amp * TWChoose.kr(ft4, [0, 1], [0.17, 0.83]);
+    amp = amp * TWChoose.kr(ft4, [0, 1], [0.2, 0.8]);
 	RecordBuf.ar(sig * 0.55, recBuf, loop: 1);
 	//#pitch, hasFreq = Pitch.kr(sig, minFreq: 40);
-    SendTrig.kr(Amplitude.kr(sig * amp.lag(0.067), 0.1, 0.1) < 0.00005, 1001, 0);
+    SendTrig.kr(Amplitude.kr(sig * amp.lag(0.01), 0.02, 0.067) < 0.0001, 1001, 0);
 	//Pan2.ar(sig, 0, (1-mute).lag(0.067) * amp.lag(0.067));
     Out.ar(out, sig * amp);
 }).send(s);

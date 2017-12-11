@@ -9,8 +9,8 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    //~numChans = 2;
-    ~numChans = 4;
+    ~numChans = 2;
+    //~numChans = 4;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
@@ -37,7 +37,7 @@ s.waitForBoot({
         "Off we go".postln;
 
         // output busses for the synths
-/*        outs = Dictionary[
+        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -50,10 +50,10 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];*/
+        ];
 
         // output busses if you're doing some external mixing, for instance
-        outs = Dictionary[
+/*        outs = Dictionary[
             \saddy -> 4,
             \foire -> 8,
             \spitter -> 8,
@@ -66,7 +66,7 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];
+        ];*/
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
@@ -89,7 +89,7 @@ s.waitForBoot({
             \sticker2 -> Synth(\bufSticker, [\bufnum, streams[\talkers].next.bufnum, \rate, 0.8, \amp, 0.8, \out, outs[\sticker2]]),
             \engine -> Synth([\talkyVosc, \chopTalk].choose, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]),
             \wavesource -> Synth(\talkySquid, [\recBuf, ~tatBufs.rec[\recChipper].bufnum, \shapeBuf, ~tatBufs.distort[1].bufnum]),
-            \wavesourceName -> \talkySquid,
+            \wavesourceName -> \offOnSite,
             \sonk -> Synth(\saddy, [\bufnum, streams[\sonks].next.bufnum, \gate, 1, \spgate, 1, \rate, 0.6, \spread, 0.8, \amp, 8, \out, outs[\saddy]])
         ];
 
@@ -329,11 +329,12 @@ s.waitForBoot({
                                         synths[\sonk].set(\gate, 1, \spgate, 1, \spread, rrand(0.67, 0.87));
                                     });
                                     // maybe change the wavesource
-                                    (0.3333.coin).if({
+                                    (0.4.coin).if({
                                         var newSynth = [\talkySquid, \offOnSite].choose;
                                         (newSynth != synths[\wavesourceName]).if({
                                             synths[\wavesource].free;
                                             synths[\wavesource] = Synth(newSynth, [\recBuf, ~tatBufs.rec[\recChipper].bufnum, \shapeBuf, ~tatBufs.distort[1].bufnum]);
+                                            synths[\wavesourceName] = newSynth;
                                         });
                                     });
                                 }.fork;
@@ -363,6 +364,7 @@ s.waitForBoot({
                         { rrand(0.7, 6).wait; synths[\sticker2].set(\posGate, 0, \repRate, 0) }.fork;
                     });
                     ~chipper.increment();
+                    // [synths[\wavesourceName], ~chipper.requests].postln;
                 },
                 1003, {
                     // free some chip bufs that we hope are no longer playing
