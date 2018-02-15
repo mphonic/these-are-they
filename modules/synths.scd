@@ -68,7 +68,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
     }).send(s);
 
     SynthDef(\uncommon, {|in1 = 32, in2 = 36, amp = 1, recBuf = 0, out = 0|
-        var i1, i2, chain1, chain2, chain;
+        var i1, i2, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor, dist;
         i1 = In.ar(in1, ~numChans) * 2;
         i2 = In.ar(in2, ~numChans);
         RecordBuf.ar(i2.mean, recBuf, loop: 1);
@@ -77,8 +77,15 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01);
         chain1 = FFT({LocalBuf(1024)}.dup(~numChans), DelayN.ar(i1, 0.3333, 0.3333));
         chain2 = FFT({LocalBuf(1024)}.dup(~numChans), i2);
-        chain = PV_XFade(chain2, chain1, [LFNoise2.kr(0.5, 0.5, 0.05).max(0.01).dup, LFNoise2.kr(0.3, 0.3, 0.005).max(0.008).dup].flatten.squared);
-        Out.ar(out, IFFT(chain) * amp.lag(0.1));
+        chain = PV_XFade(chain2, chain1, [LFNoise1.kr(0.5, 0.6).squared.max(0.008).dup, LFNoise1.kr(0.3, 0.6).squared.max(0.008).dup].flatten.squared);
+        // "forgetting" sound
+        dist = LFBrownNoise2.kr(1, 0.366).range(0.2, 0.7);
+        trig = CoinGate.kr(dist.linlin(0, 1.0, 0, 0.6), Dust.kr(dist.linexp(0, 1.0, 0.05, 0.15)));
+        timescale = TRand.kr(1.0, dist.linlin(0, 1.0, 0.5, 2.83), trig);
+        pitchenv = EnvGen.kr(Env([1, 1, 0.5], [0, 3], [0, \exp]), gate: trig, timeScale: timescale);
+        modenv = EnvGen.kr(Env([0,0,1,0.8,0.8,0],[0,0.8,0.2,0.5,1.5]), gate: trig, timeScale: timescale);
+        forgettor = PMOsc.ar(TExpRand.kr(55, 100.0, trig.dup(4)), TExpRand.kr(30.0, 50, trig.dup(4)) * pitchenv, modenv, mul: modenv.squared * 0.2).softclip + LPF.ar(BrownNoise.ar(0.4.dup), TExpRand.kr(80, 140.0, trig.dup(4)), modenv);
+        Out.ar(out, (modenv.squared * forgettor * 0.6 + (1 - modenv * IFFT(chain))) * amp.lag(0.1));
     }).send(s);
 }, {
     SynthDef(\talkyVosc, {|fmul = 1, rmul = 1, rootbuf = 0, recBuf = 0, out = 32|

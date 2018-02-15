@@ -11,10 +11,10 @@
     ~incrementNumFoired = {|self|
         self.numFoired = self.numFoired + 1;
     };
-    ~resetThreshold = {|self, min=11, max=14|
+    ~resetThreshold = {|self, min=11, max=13|
         self.threshold = rrand(min, max);
     };
-    ~resetCounts = {|self, min=11, max=14|
+    ~resetCounts = {|self, min=11, max=13|
         self.numFoired = 0;
         self.resetThreshold(min, max);
     };

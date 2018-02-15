@@ -185,7 +185,7 @@ s.waitForBoot({
                     (x.duration * rrand(1, 1.013)).wait;
                     self.ludeing = false;
                     ~chipper.resetPathStream(~tatBufs.chipPaths);
-                    synths[\engine] = Synth(\talkyVosc, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
+                    synths[\engine] = Synth([\talkyVosc, \chopTalk].wchoose([0.55, 0.45]), [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
                     synths[\wavesource].run(true);
                     synths[\sticker1].run(true);
                     synths[\sticker2].run(true);
@@ -230,7 +230,7 @@ s.waitForBoot({
                 1000, {
                     // silences from "engine" synth
                     (holdIt.not.and(governor.coin)).if({
-                        var dudeAmp = [0, 0.2, 0.667, 1.0, 1.5].wchoose([0.1, 0.14, 0.22, 0.5, 0.04]);
+                        var dudeAmp = [0, 0.2, 0.667, 0.83, 1.0, 1.5].wchoose([0.1, 0.14, 0.22, 0.1, 0.4, 0.04]);
                         holdIt = true;
                         governor = (governor * 0.98).max(0.88);
                         { 0.5.wait; holdIt = false }.fork;
@@ -251,7 +251,7 @@ s.waitForBoot({
                                 }.fork;
                             });
                         }, {
-                            ((dudeAmp >= 1) && 0.4.coin).if({ { 1.wait; synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum); }.fork });
+                            ((dudeAmp >= 1) && 0.1667.coin).if({ { 1.wait; synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum); }.fork });
                         });
                         // maybe spit out the recorded buffer or change the talkers
                         // foire if the irriation is high enough
@@ -259,7 +259,7 @@ s.waitForBoot({
                             var waitit;
                             synths[\engine].run(false);
                             // a.run(false);
-                            irritation = (irritation * rrand(1.0287, 1.1)).min(0.4);
+                            irritation = (irritation * rrand(1.0287, 1.11)).min(0.4);
                             (0.7.coin).if({
                                 waitit = rrand(1.0, 4.7);
                                 Synth.grain(\spitter, [
@@ -283,7 +283,7 @@ s.waitForBoot({
                                 synths[\sticker2].set(\rate, rrand(0.7, 0.85));
                                 (0.5.coin && ~lude.ludeing.not).if({
                                     synths[\engine].free;
-                                    synths[\engine] = Synth([\talkyVosc, \chopTalk].wchoose([0.6, 0.4]), [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
+                                    synths[\engine] = Synth([\talkyVosc, \chopTalk].wchoose([0.55, 0.45]), [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]);
                                 }, {
                                     (0.5.coin).if({
                                         synths[\engine].set(\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum);
