@@ -9,8 +9,7 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    ~numChans = 2;
-    //~numChans = 4;
+    ~numChans = 4;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
@@ -37,7 +36,7 @@ s.waitForBoot({
         "Off we go".postln;
 
         // output busses for the synths
-        outs = Dictionary[
+/*        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -50,23 +49,23 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];
+        ];*/
 
         // output busses if you're doing some external mixing, for instance
-/*        outs = Dictionary[
-            \saddy -> 4,
-            \foire -> 8,
-            \spitter -> 8,
-            \chipper -> 12,
-            \talker -> 0,
-            \lude -> 0,
-            \mouth -> 0,
-            // these have internal routing, so just be aware of where you're sending them
-            \sticker1 -> 36,
-            \sticker2 -> 38,
-            \engine -> 32,
-            \bomba -> 56
-        ];*/
+        outs = Dictionary[
+        \saddy -> 4,
+        \foire -> 8,
+        \spitter -> 8,
+        \chipper -> 12,
+        \talker -> 0,
+        \lude -> 0,
+        \mouth -> 0,
+        // these have internal routing, so just be aware of where you're sending them
+        \sticker1 -> 36,
+        \sticker2 -> 38,
+        \engine -> 32,
+        \bomba -> 56
+        ];
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
@@ -231,7 +230,7 @@ s.waitForBoot({
                 1000, {
                     // silences from "engine" synth
                     (holdIt.not.and(governor.coin)).if({
-                        var dudeAmp = [0, 0.2, 0.667, 1.0, 1.5].wchoose([0.11, 0.15, 0.2, 0.5, 0.04]);
+                        var dudeAmp = [0, 0.2, 0.667, 1.0, 1.5].wchoose([0.1, 0.14, 0.22, 0.5, 0.04]);
                         holdIt = true;
                         governor = (governor * 0.98).max(0.88);
                         { 0.5.wait; holdIt = false }.fork;
@@ -242,6 +241,15 @@ s.waitForBoot({
                         // change sonk qualities depending on its volume
                         (0.5.coin && (dudeAmp < 1)).if({
                             synths[\sonk].set(\rate, [0.6, 0.5, 0.3, 0.85].wchoose([0.6, 0.2, 0.1, 0.1]), \spread, rrand(0.67, 0.87));
+                            ((dudeAmp < 0.5) && 0.6.coin).if({
+                                synths[\engine].run(false);
+                                synths[\wavesource].run(false);
+                                {
+                                    rrand(2, 5).wait;
+                                    synths[\engine].run(true);
+                                    synths[\wavesource].run(true);
+                                }.fork;
+                            });
                         }, {
                             ((dudeAmp >= 1) && 0.4.coin).if({ { 1.wait; synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum); }.fork });
                         });
@@ -251,7 +259,7 @@ s.waitForBoot({
                             var waitit;
                             synths[\engine].run(false);
                             // a.run(false);
-                            irritation = (irritation * rrand(1.05, 1.1)).min(0.4);
+                            irritation = (irritation * rrand(1.0287, 1.1)).min(0.4);
                             (0.7.coin).if({
                                 waitit = rrand(1.0, 4.7);
                                 Synth.grain(\spitter, [
@@ -346,7 +354,7 @@ s.waitForBoot({
                                 ~chipper.resetThresholds();
                                 irritation = (irritation * 0.6).max(0.09);
                             });
-                            synths[\engine].set(\rmul, [1, 0.5, 2].wchoose([0.85, 0.075, 0.075]));
+                            synths[\engine].set(\rmul, [1, 0.5, 0.667, 2].wchoose([0.85, 0.05, 0.05, 0.05]));
                         });
                     }, {
                         governor = (governor * 1.02).min(1);

@@ -77,7 +77,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01);
         chain1 = FFT({LocalBuf(1024)}.dup(~numChans), DelayN.ar(i1, 0.3333, 0.3333));
         chain2 = FFT({LocalBuf(1024)}.dup(~numChans), i2);
-        chain = PV_Morph(chain2, chain1, [LFNoise2.kr(0.5, 0.5, 0.05).max(0.01).dup, LFNoise2.kr(0.3, 0.3, 0.005).max(0.008).dup].flatten.squared);
+        chain = PV_XFade(chain2, chain1, [LFNoise2.kr(0.5, 0.5, 0.05).max(0.01).dup, LFNoise2.kr(0.3, 0.3, 0.005).max(0.008).dup].flatten.squared);
         Out.ar(out, IFFT(chain) * amp.lag(0.1));
     }).send(s);
 }, {
@@ -194,7 +194,7 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
     sig=DelayC.ar(BufRd.ar(1, bufnum, read, 1, 4), 0.067, 0.067) * (1 - trigem).lag(0.067);
     // smear = Mix(FreqShift.ar(sig, { ExpRand(20, 440.0) * TChoose.kr(Impulse.kr(0), [-1, 1]) }.dup(4), mul: 0.4));
     smear = SMS.ar(sig, noisefloor: 0.05, freqmult: LFNoise0.kr(0.2).range(-12, 12).midiratio, formantpreserve: 1);
-    smear = smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 2;
+    smear = if(LFNoise1.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45)).exprange(0.01, 1.0), sig, smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 2);
     Out.ar(out,
         Pan2.ar(
             if(LFNoise2.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45), 0.5, 0.288).max(0).round.lag(0.2), LPF.ar(LeakDC.ar(Squiz.ar(sig, LFNoise1.kr(0.4).exprange(0.9, 1.5).squared.max(1), 1)), 10000), smear),
@@ -219,7 +219,7 @@ SynthDef(\saddy, {|rate=0.5, spread=1.0, bufnum=0, gate=0, spgate=0, amp=1, out=
     chain = FFT(fftbuf, i);
     cep = Cepstrum({ LocalBuf(1024, 1) }.dup, chain);
     //cep = PV_BinShift(cep, 1, n1.lincurve(-1.0, 1.0, 0, [-4, -4.5], 2), 1);
-    cep = PV_MagSmear(cep, n1.exprange(0.2, 30));
+    cep = PV_MagSmear(cep, n1.exprange(0.05, 30));
     chain = ICepstrum(cep, fftbuf);
     o = IFFT(chain);
     o = o.softclip * e;
