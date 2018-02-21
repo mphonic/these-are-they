@@ -87,7 +87,7 @@
             mrf = betarand(0.0004, 0.0047, 0.2, 0.3) * [1, 0.5].wchoose([0.9, 0.1]);
             wf = 0;
             amp = 0.6;
-            hmul = rrand(1.8, 3.6);
+            hmul = [rrand(1.8, 3.6), rrand(3.6, 5.0)].wchoose([0.9, 0.1]);
             self.didUnison = 1;
         });
         durations = self.generateDurations(minnum, maxnum, mindur, maxdur) * hmul;

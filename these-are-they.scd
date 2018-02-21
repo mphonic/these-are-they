@@ -89,7 +89,7 @@ s.waitForBoot({
             \engine -> Synth([\talkyVosc, \chopTalk].choose, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]),
             \wavesource -> Synth(\talkySquid, [\recBuf, ~tatBufs.rec[\recChipper].bufnum, \shapeBuf, ~tatBufs.distort[1].bufnum]),
             \wavesourceName -> \offOnSite,
-            \sonk -> Synth(\saddy, [\bufnum, streams[\sonks].next.bufnum, \gate, 1, \spgate, 1, \rate, 0.6, \spread, 0.8, \amp, 8, \out, outs[\saddy]])
+            \sonk -> Synth(\saddy, [\bufnum, streams[\sonks].next.bufnum, \gate, 1, \spgate, 1, \rate, 0.6, \spread, 0.8, \amp, 6, \out, outs[\saddy]])
         ];
 
         // re-cue bombas and ludes
@@ -230,17 +230,17 @@ s.waitForBoot({
                 1000, {
                     // silences from "engine" synth
                     (holdIt.not.and(governor.coin)).if({
-                        var dudeAmp = [0, 0.2, 0.667, 0.83, 1.0, 1.5].wchoose([0.1, 0.14, 0.22, 0.1, 0.4, 0.04]);
+                        var dudeAmp = [0, 0.2, 0.667, 0.83, 1.0, 1.5].wchoose([0.05, 0.1, 0.22, 0.19, 0.4, 0.04]);
                         holdIt = true;
                         governor = (governor * 0.98).max(0.88);
                         { 0.5.wait; holdIt = false }.fork;
                         // change minor things
                         synths[\engine].set(\fmul, [1, 2, 4, 7].wchoose([0.45, 0.25, 0.15, 0.15]));
                         synths[\uncommon].set(\amp, dudeAmp);
-                        synths[\sonk].set(\amp, (1 - dudeAmp).max(0) * 8);
+                        synths[\sonk].set(\amp, (1 - dudeAmp).max(0) * 6);
                         // change sonk qualities depending on its volume
                         (0.5.coin && (dudeAmp < 1)).if({
-                            synths[\sonk].set(\rate, [0.6, 0.5, 0.3, 0.85].wchoose([0.6, 0.2, 0.1, 0.1]), \spread, rrand(0.67, 0.87));
+                            synths[\sonk].set(\rate, [0.73, 0.57, 0.45, 0.9].wchoose([0.6, 0.2, 0.1, 0.1]), \spread, rrand(0.67, 0.87));
                             ((dudeAmp < 0.5) && 0.6.coin).if({
                                 synths[\engine].run(false);
                                 synths[\wavesource].run(false);
@@ -251,7 +251,7 @@ s.waitForBoot({
                                 }.fork;
                             });
                         }, {
-                            ((dudeAmp >= 1) && 0.1667.coin).if({ { 1.wait; synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum); }.fork });
+                            ((dudeAmp >= 0.8) && 0.1.coin).if({ { 1.wait; synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum); }.fork });
                         });
                         // maybe spit out the recorded buffer or change the talkers
                         // foire if the irriation is high enough

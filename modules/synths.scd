@@ -80,7 +80,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         chain = PV_XFade(chain2, chain1, [LFNoise1.kr(0.5, 0.6).squared.max(0.008).dup, LFNoise1.kr(0.3, 0.6).squared.max(0.008).dup].flatten.squared);
         // "forgetting" sound
         dist = LFBrownNoise2.kr(1, 0.366).range(0.2, 0.7);
-        trig = CoinGate.kr(dist.linlin(0, 1.0, 0, 0.6), Dust.kr(dist.linexp(0, 1.0, 0.05, 0.15)));
+        trig = CoinGate.kr(dist.linlin(0, 1.0, 0, 0.6), Dust.kr(dist.linexp(0, 1.0, 0.05, 0.2)));
         timescale = TRand.kr(1.0, dist.linlin(0, 1.0, 0.5, 2.83), trig);
         pitchenv = EnvGen.kr(Env([1, 1, 0.5], [0, 3], [0, \exp]), gate: trig, timeScale: timescale);
         modenv = EnvGen.kr(Env([0,0,1,0.8,0.8,0],[0,0.8,0.2,0.5,1.5]), gate: trig, timeScale: timescale);
