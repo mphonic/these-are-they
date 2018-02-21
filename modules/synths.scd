@@ -216,11 +216,11 @@ SynthDef(\saddy, {|rate=0.5, spread=1.0, bufnum=0, gate=0, spgate=0, amp=1, out=
     e = EnvGen.kr(Env.asr(1.0, 1, 3), gate);
     sp = EnvGen.kr(Env.asr(1.0, 1, 3), spgate);
     i = LeakDC.ar(PlayBuf.ar(2, bufnum, BufRateScale.kr(bufnum) * rate.lag(0.2) * sp, loop: 1));
-    n1 = LFBrownNoise1.kr(1, 0.3, 1);
-    n2 = LFBrownNoise1.kr(1, 0.3, 1);
+    n1 = LFBrownNoise1.kr(1, 0.5, 1);
+    n2 = LFBrownNoise1.kr(1, 0.5, 1);
     //i = [SMS.ar(i[0], freqmult: n1.lincurve(-1.0, 1.0, 1, 0.69, 2), useifft: 1)[0], SMS.ar(i[1], freqmult: n1.lincurve(-1.0, 1.0, 1, 0.55, 2), useifft: 1)[0]];
 
-    i = Splay.ar(DelayC.ar(PitchShift.ar(i * amp.lag(1), 0.2, n1.lincurve(-1.0, 1.0, 1, [0.69, 0.55], 2), timeDispersion: { ExpRand(0.001, 0.005) }.dup), 0.125, { Rand(0.02, 0.125) }.dup * n1.range(0, 1.0).squared), spread) * n2.range(0.4, 1).squared;
+    i = Splay.ar(DelayC.ar(PitchShift.ar(i * amp.lag(1), 0.2, n1.lincurve(-1.0, 1.0, 1, [0.75, 0.65], 2), timeDispersion: { ExpRand(0.001, 0.005) }.dup), 0.125, { Rand(0.02, 0.125) }.dup * n1.range(0, 1.0).squared), spread) * n2.range(0.4, 1).squared;
     //i = Splay.ar(DelayC.ar(i, 0.125, { Rand(0.02, 0.125) }.dup * n1.range(0, 1.0).squared), spread);
     fftbuf = { LocalBuf(2048, 1) }.dup;
     chain = FFT(fftbuf, i);

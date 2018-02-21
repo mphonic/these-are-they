@@ -89,7 +89,7 @@ s.waitForBoot({
             \engine -> Synth([\talkyVosc, \chopTalk].choose, [\rootbuf, ~tatBufs.vosc.choose.at(0).bufnum, \recBuf, ~tatBufs.rec[\recEngines].bufnum, \out, outs[\engine]]),
             \wavesource -> Synth(\talkySquid, [\recBuf, ~tatBufs.rec[\recChipper].bufnum, \shapeBuf, ~tatBufs.distort[1].bufnum]),
             \wavesourceName -> \offOnSite,
-            \sonk -> Synth(\saddy, [\bufnum, streams[\sonks].next.bufnum, \gate, 1, \spgate, 1, \rate, 0.6, \spread, 0.8, \amp, 6, \out, outs[\saddy]])
+            \sonk -> Synth(\saddy, [\bufnum, streams[\sonks].next.bufnum, \gate, 1, \spgate, 1, \rate, 0.6, \spread, 0.8, \amp, 0, \out, outs[\saddy]])
         ];
 
         // re-cue bombas and ludes
@@ -230,10 +230,10 @@ s.waitForBoot({
                 1000, {
                     // silences from "engine" synth
                     (holdIt.not.and(governor.coin)).if({
-                        var dudeAmp = [0, 0.2, 0.667, 0.83, 1.0, 1.5].wchoose([0.05, 0.1, 0.22, 0.19, 0.4, 0.04]);
+                        var dudeAmp = [0, 0.2, 0.667, 0.83, 1.0, 1.5].wchoose([0.05, 0.1, 0.165, 0.245, 0.4, 0.04]);
                         holdIt = true;
                         governor = (governor * 0.98).max(0.88);
-                        { 0.5.wait; holdIt = false }.fork;
+                        { rrand(0.4, 0.6).wait; holdIt = false }.fork;
                         // change minor things
                         synths[\engine].set(\fmul, [1, 2, 4, 7].wchoose([0.45, 0.25, 0.15, 0.15]));
                         synths[\uncommon].set(\amp, dudeAmp);
@@ -354,7 +354,7 @@ s.waitForBoot({
                                 ~chipper.resetThresholds();
                                 irritation = (irritation * 0.6).max(0.09);
                             });
-                            synths[\engine].set(\rmul, [1, 0.5, 0.667, 2].wchoose([0.85, 0.05, 0.05, 0.05]));
+                            synths[\engine].set(\rmul, [1, 0.6, 0.75, 2].wchoose([0.85, 0.05, 0.05, 0.05]));
                         });
                     }, {
                         governor = (governor * 1.02).min(1);
