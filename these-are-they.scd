@@ -9,7 +9,7 @@ s.waitForBoot({
     var go, no, w, butt;
 
     ~docDir = Document.current.dir;
-    ~numChans = 4;
+    ~numChans = 2;
 
     // setup buffers and paths for vosc, samples, interludes, etc.
     Buffer.freeAll;
@@ -32,11 +32,12 @@ s.waitForBoot({
         // governor modifies the probability of reactions and can also serve to slow them down
         // irritation is the probability of a "foire" occuring durring an engine silence
         // its value also affects the length of a foire event
-        var synths, streams, bomba, outs, holdIt = true, irritation=0.164, governor = 1;
+        var synths, streams, bomba, outs, holdIt = true, irritation=0.164, governor = 1, forgettingPhase = 0;
         "Off we go".postln;
+        forgettingPhase = 1.5 * pi;
 
         // output busses for the synths
-/*        outs = Dictionary[
+        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -49,9 +50,9 @@ s.waitForBoot({
             \sticker2 -> 38,
             \engine -> 32,
             \bomba -> 56
-        ];*/
+        ];
 
-        // output busses if you're doing some external mixing, for instance
+/*        // output busses if you're doing some external mixing, for instance
         outs = Dictionary[
         \saddy -> 4,
         \foire -> 8,
@@ -65,7 +66,7 @@ s.waitForBoot({
         \sticker2 -> 38,
         \engine -> 32,
         \bomba -> 56
-        ];
+        ];*/
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
@@ -233,10 +234,11 @@ s.waitForBoot({
                         var dudeAmp = [0, 0.2, 0.667, 0.83, 1.0, 1.5].wchoose([0.05, 0.1, 0.165, 0.245, 0.4, 0.04]);
                         holdIt = true;
                         governor = (governor * 0.98).max(0.88);
+                        forgettingPhase = (forgettingPhase + 0.05) % 2pi;
                         { rrand(0.4, 0.6).wait; holdIt = false }.fork;
                         // change minor things
                         synths[\engine].set(\fmul, [1, 2, 4, 7].wchoose([0.45, 0.25, 0.15, 0.15]));
-                        synths[\uncommon].set(\amp, dudeAmp);
+                        synths[\uncommon].set(\amp, dudeAmp, \dist, forgettingPhase.sin.linlin(-1.0, 1.0, 0.1, 0.7));
                         synths[\sonk].set(\amp, (1 - dudeAmp).max(0) * 6);
                         // change sonk qualities depending on its volume
                         (0.5.coin && (dudeAmp < 1)).if({
@@ -259,7 +261,7 @@ s.waitForBoot({
                             var waitit;
                             synths[\engine].run(false);
                             // a.run(false);
-                            irritation = (irritation * rrand(1.0287, 1.11)).min(0.4);
+                            irritation = (irritation * exprand(1.0287, 1.11)).min(0.4);
                             (0.7.coin).if({
                                 waitit = rrand(1.0, 4.7);
                                 Synth.grain(\spitter, [
@@ -346,7 +348,7 @@ s.waitForBoot({
                                         });
                                     });
                                 }.fork;
-                                irritation = (irritation * rrand(0.9, 0.98)).max(0.09);
+                                irritation = (irritation * exprand(0.9, 0.98)).max(0.09);
                                 ~foire.incrementNumFoired();
                             }, {
                                 ~lude.go();

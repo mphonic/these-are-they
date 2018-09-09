@@ -51,9 +51,22 @@ s.sync;
     Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
         var n, a;
         n = i+1;
+        a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (( j % 2 + 0.6 * 0.5).coin).if({ 0.9.rand.squared }) }) });
+        buf.sine1Msg(a);
+    }),
+    Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
+        var n, a;
+        n = i+1;
         a = Array.fill(n, { arg j; (j == 0).if({ 0.9.rand.squared }, { (j % 2 == 0).if({ (j + 1).reciprocal }, { 0 }) });  });
         buf.sine1Msg(a);
-})];
+    }),
+    Buffer.allocConsecutive(32, s, 4096, 1, {|buf, i|
+        var n, a;
+        n = i+1;
+        a = Array.fill(n, { arg j; (j == 0).if({ 0.9.rand.squared }, { (j % 2 == 1).if({ (j + 1).reciprocal }, { 0 }) });  });
+        buf.sine1Msg(a);
+    })
+];
 ~tatBufs.remakeVosc = {
     ~tatBufs.vosc[0].do({|e, i|
         var n, a;
@@ -61,4 +74,10 @@ s.sync;
         a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (0.3.coin).if({ 0.9.rand.squared }) }) });
         e.sine1Msg(a);
     });
+    ~tatBufs.vosc[1].do({|e, i|
+        var n, a;
+        n = i+1;
+        a = Array.fill(n, {|j| ((j == i)).if({ 1 }, { (( j % 2 + 0.6 * 0.5).coin).if({ 0.9.rand.squared }) }) });
+        e.sine1Msg(a);
+    })
 };

@@ -50,7 +50,7 @@
                             [
                                 \out, self.out,
                                 \buf, b,
-                                \rate, rrand(0.1, 1.9) * [1, -1].wchoose([0.75, 0.25]),
+                                \rate, betarand(0.1, 1.9, 0.8, 1.2) * [1, -1].wchoose([0.75, 0.25]),
                                 \at, rrand(0.067, 3) * tmul,
                                 \dur, rrand(1, 8.0) * tmul,
                                 \dec, rrand(0.067, 1) * tmul,

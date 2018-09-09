@@ -31,6 +31,7 @@
         Wavesets.clear;
         self.buf = self.getWavesetBuf.value;
         self.copySourceBuf();
+        // self.buf.normalize;
         self.buf.loadToFloatArray(0,-1,{|fa|
             var sig;
             sig=Signal.newFrom(fa);
@@ -78,13 +79,13 @@
         self.foiring.add(1);
         self.loadWavesets();
         ((self.didUnison * 0.1 + 0.367).coin).if({
-            mrf = { betarand(0.0004, 0.0067, 0.17, 0.3) * [1, 0.5].wchoose([0.9, 0.1]) };
+            mrf = { betarand(0.0004, 0.006, 0.1, 0.3) * [1, 0.5].wchoose([0.9, 0.1]) };
             wf = { [0, rrand(0.1, 0.67)].wchoose([0.6, 0.4]) };
             amp = 1;
             hmul = [1, rrand(1.8, 3.0)].wchoose([0.86, 0.14]);
             self.didUnison = 0;
         }, {
-            mrf = betarand(0.0004, 0.0047, 0.2, 0.3) * [1, 0.5].wchoose([0.9, 0.1]);
+            mrf = betarand(0.0004, 0.0047, 0.1, 0.3) * [1, 0.5].wchoose([0.9, 0.1]);
             wf = 0;
             amp = 0.6;
             hmul = [rrand(1.8, 3.6), rrand(3.6, 5.0)].wchoose([0.9, 0.1]);
