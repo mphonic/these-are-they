@@ -19,13 +19,13 @@ To run this line of code, put the cursor on the same line as the code and hit Sh
 To start the piece, open these-are-they.scd. Hit ctrl-enter, and you'll get a window with a start button. You can hit "Start" to begin, but nothing will really happen until you add audio.
 
 ### Adding Audio
-In the project directory, you'll need to create an audio folder with five subfolders: bombas, chips, ludes, sonks, and talkers (names are case-sensitive). The files you put in each of those folders will have different functions and transformations within the piece. Below is an explanation of how files in each folder function. The files themselves should be uncompressed (wav or aiff). They can have any sample rate and bit depth, but, by default, the piece runs at 44.1k (files will be resampled appropriately). Files in bombas, ludes, and sonks should be stereo, interleaved. Files in chips and talkers can either be stereo or mono (only the left channel will be used in talkers).
+In the main project folder (these-are-they), you'll need to create an audio folder (named 'audio') with five subfolders: bombas, chips, ludes, sonks, and talkers (names are case-sensitive). The files you put in each of those folders will have different functions and transformations within the piece. Below is an explanation of how files in each folder function. The files themselves should be uncompressed (wav or aiff). They can have any sample rate and bit depth, but, by default, the piece runs at 44.1k (files will be resampled appropriately). Files in bombas, ludes, and sonks should be stereo, interleaved. Files in chips and talkers can either be stereo or mono (only the left channel will be used in talkers).
 
 bombas -> The piece periodically reaches a threshold where there's something of an explosion, or at least a wiggly moment. Every so often, that wiggly moment is replaced by files in the bombas folder: two played at the same time, marginally detuned, in the order they appear in the folder. These are relatively rare moments but can be generally striking.
 
 chips -> Files in this folder get output in little clusters, usually short snippets, forwards or backwards, slower or faster. You generally don't hear these at the very beginning, but after a little time, they get spit out.
 
-ludes -> These are interludes. They get played as-is after a certain amount of explosions / wiggly moments. Other material may overlap at the beginning, but once that winds down, the lude just plays unaccompanied until it's done. This would be a place where you can do your own thing without the app mangling it.
+ludes -> These are interludes. They get played as-is, after a certain amount of explosions / wiggly moments. Other material may overlap at the beginning, but once that winds down, the lude just plays unaccompanied until it's done. This would be a place where you can do your own thing without the app mangling it.
 
 sonks -> These are meant to be lush, dramatic pieces that usually appear blurred, detuned, and slowed down. Sometimes, however, they come into focus. Often, you don't hear them as long, uninterrupted segments, but there are exceptions. 
 
