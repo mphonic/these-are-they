@@ -208,10 +208,10 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
     sig=DelayC.ar(BufRd.ar(1, bufnum, read, 1, 4), 0.067, 0.067) * (1 - trigem).lag(0.067);
     // smear = Mix(FreqShift.ar(sig, { ExpRand(20, 440.0) * TChoose.kr(Impulse.kr(0), [-1, 1]) }.dup(4), mul: 0.4));
     smear = SMS.ar(sig, noisefloor: 0.05, freqmult: LFNoise0.kr(0.2).range(-12, 12).midiratio, formantpreserve: 1);
-    smear = if(LFNoise1.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45)).exprange(0.01, 1.0), sig, smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 4);
+    smear = HPF.ar(if(LFNoise1.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45)).exprange(0.1, 1.0), sig, smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 4), 80);
     Out.ar(out,
         Pan2.ar(
-            if(LFNoise2.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45), 0.5, 0.288).max(0).round.lag(0.2), LPF.ar(LeakDC.ar(Squiz.ar(sig, LFNoise1.kr(0.4).exprange(0.9, 1.5).squared.max(1), 1)), 10000), smear),
+            if(LFNoise2.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45), 0.6, 0.288).max(0).round.lag(0.2), LPF.ar(LeakDC.ar(Squiz.ar(sig, LFNoise1.kr(0.4).exprange(0.95, 1.5).squared.max(1), 1)), 10000), smear),
             pan,
             amp
         )

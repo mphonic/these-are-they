@@ -52,12 +52,12 @@ s.waitForBoot({
             \bomba -> 56
         ];
 
-/*        // output busses if you're doing some external mixing, for instance
-        outs = Dictionary[
-        \saddy -> 4,
-        \foire -> 8,
+        // output busses if you're doing some external mixing, for instance
+/*        outs = Dictionary[
+        \saddy -> 2,
+        \foire -> 4,
         \spitter -> 8,
-        \chipper -> 12,
+        \chipper -> 6,
         \talker -> 0,
         \lude -> 0,
         \mouth -> 0,
