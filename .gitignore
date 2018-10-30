@@ -1,6 +1,6 @@
-audio/*
 audio/bombas/*
 audio/chips/*
 audio/ludes/*
 audio/sonks/*
 audio/talkers/*
+!.gitkeep
