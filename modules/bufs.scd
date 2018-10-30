@@ -29,15 +29,15 @@ s.sync;
     \waveset2 -> Buffer.alloc(s, s.sampleRate * 4, 1)
 ];
 
-~tatBufs.sonks = (~docDir ++ "/audio/sonks/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.read(s, item) });
+~tatBufs.sonks = (~docDir ++ "/audio/sonks/*").pathMatch.select({|item| "^[.]".matchRegexp(item).not }).collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.read(s, item) });
 
-~tatBufs.talkers = (~docDir ++ "/audio/talkers/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.readChannel(s, item, channels: 0).normalize });
+~tatBufs.talkers = (~docDir ++ "/audio/talkers/*").pathMatch.select({|item| "^[.]".matchRegexp(item).not }).collect({|item| (item.asSymbol++"*").pathMatch[0]}).collect({|item, i| Buffer.readChannel(s, item, channels: 0).normalize });
 
-~tatBufs.ludes = (~docDir ++ "/audio/ludes/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).sort.collect({|item, i| Buffer.cueSoundFile(s, item, numChannels: ~numChans, bufferSize: 2097152); });
+~tatBufs.ludes = (~docDir ++ "/audio/ludes/*").pathMatch.select({|item| "^[.]".matchRegexp(item).not }).collect({|item| (item.asSymbol++"*").pathMatch[0]}).sort.collect({|item, i| Buffer.cueSoundFile(s, item, numChannels: ~numChans, bufferSize: 2097152); });
 
-~tatBufs.bombas = (~docDir ++ "/audio/bombas/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]}).sort.collect({|item, i| Buffer.cueSoundFile(s, item, bufferSize: 262144) });
+~tatBufs.bombas = (~docDir ++ "/audio/bombas/*").pathMatch.select({|item| "^[.]".matchRegexp(item).not }).collect({|item| (item.asSymbol++"*").pathMatch[0]}).sort.collect({|item, i| Buffer.cueSoundFile(s, item, bufferSize: 262144) });
 
-~tatBufs.chipPaths = (~docDir ++ "/audio/chips/*").pathMatch.collect({|item| (item.asSymbol++"*").pathMatch[0]});
+~tatBufs.chipPaths = (~docDir ++ "/audio/chips/*").pathMatch.select({|item| "^[.]".matchRegexp(item).not }).collect({|item| (item.asSymbol++"*").pathMatch[0]});
 
 s.sync;
 
