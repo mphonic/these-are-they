@@ -68,24 +68,27 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
     }).send(s);
 
     SynthDef(\uncommon, {|in1 = 32, in2 = 36, amp = 1, recBuf = 0, forgettingDistance = 0.1, out = 0|
-        var i1, i2, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor;
+        var i1, i2, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor, outMix;
         i1 = In.ar(in1, ~numChans) * 2;
         i2 = In.ar(in2, ~numChans);
         RecordBuf.ar(i2.mean, recBuf, loop: 1);
-        i2 = i2 * EnvDetect.ar(i1, 0.01, 0.1) * 1.75;
-        // i1 = LPF.ar(i1, 2200);
+        i2 = i2 * EnvDetect.ar(i1, 0.01, 0.1) + (i2 * 0.3);
         i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01);
-        chain1 = FFT({LocalBuf(1024)}.dup(~numChans), DelayN.ar(i1, 0.3333, 0.3333));
+        chain1 = FFT({LocalBuf(1024)}.dup(~numChans), OnePole.ar(i1, -0.3));
         chain2 = FFT({LocalBuf(1024)}.dup(~numChans), i2);
-        chain = PV_XFade(chain2, chain1, [LFNoise1.kr(0.5, 0.6).squared.max(0.008).dup, LFNoise1.kr(0.3, 0.6).squared.max(0.008).dup].flatten.squared);
+        chain = PV_CommonMul(chain2, chain1, 60, LFNoise2.kr(0.5, 0.55, 0.45).max(0.001));
+        chain = PV_Compander(chain, 80, 1, 0.333);
         // "forgetting" sound
-        // forgettingDistance = LFBrownNoise2.kr(1, 0.366).range(0.2, 0.7);
         trig = CoinGate.kr(forgettingDistance.linlin(0, 1.0, 0, 0.6), Dust.kr(forgettingDistance.linexp(0, 1.0, 0.05, 0.2)));
         timescale = TRand.kr(1.0, forgettingDistance.linlin(0, 1.0, 0.5, 2.83), trig);
         pitchenv = EnvGen.kr(Env([1, 1, 0.5], [0, 3], [0, \exp]), gate: trig, timeScale: timescale);
         modenv = EnvGen.kr(Env([0,0,1,0.8,0.8,0],[0,0.8,0.2,0.5,1.5]), gate: trig, timeScale: timescale);
         forgettor = PMOsc.ar(TExpRand.kr(55, 100.0, trig.dup(4)), TExpRand.kr(30.0, 50, trig.dup(4)) * pitchenv, modenv, mul: modenv.squared * 0.2).softclip + LPF.ar(BrownNoise.ar(0.4.dup), TExpRand.kr(80, 140.0, trig.dup(4)), modenv);
-        Out.ar(out, (modenv.squared * forgettor * 0.6 + (1 - modenv * IFFT(chain))) * amp.lag(0.1));
+        outMix = TBetaRand.kr(0.5, 1.0, 1.0, 0.25, Dust.kr(0.6)).lag(1);
+        Out.ar(out,
+            (modenv.squared * forgettor * 0.6
+                + (1 - modenv * (i2 * (1 - outMix) + (IFFT(chain) * 1.5 * outMix).softclip)))
+            * amp.lag(0.1));
     }).send(s);
 }, {
     SynthDef(\talkyVosc, {|fmul = 1, rmul = 1, rootbuf = 0, recBuf = 0, out = 32|
@@ -132,26 +135,28 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
     }).send(s);
 
     SynthDef(\uncommon, {|in1 = 32, in2 = 36, amp = 1, recBuf = 0, forgettingDistance = 0.1, out = 0|
-        var i1, i2, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor;
+        var i1, i2, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor, outMix;
         i1 = In.ar(in1, ~numChans) * 2;
         i2 = In.ar(in2, ~numChans);
         RecordBuf.ar(i2.mean, recBuf, loop: 1);
-        i2 = i2 * EnvDetect.ar(i1, 0.01, 0.1) * 1.75;
-        // i1 = LPF.ar(i1, 2200);
-        i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01);
-        chain1 = FFT({LocalBuf(1024)}.dup(~numChans), DelayN.ar(i1, 0.3333, 0.3333));
-        chain2 = FFT({LocalBuf(1024)}.dup(~numChans), i2);
-        chain = PV_XFade(chain2, chain1, LFNoise2.kr(0.5, 0.5, 0.05).max(0.01).squared);
-        // forgettingDistance = LFBrownNoise2.kr(1, 0.366).range(0.2, 0.7);
+        i2 = i2 * EnvDetect.ar(i1, 0.01, 0.1) + (i2 * 0.3);
+        i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 5, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.01);
+        chain1 = FFT({LocalBuf(512)}.dup(~numChans), OnePole.ar(i1, -0.3));
+        chain2 = FFT({LocalBuf(512)}.dup(~numChans), i2);
+        chain = PV_CommonMul(chain2, chain1, 60, LFNoise2.kr(0.5, 0.55, 0.45).max(0.001));
+        chain = PV_Compander(chain, 80, 1, 0.333);
         trig = CoinGate.kr(forgettingDistance.linlin(0, 1.0, 0, 0.6), Dust.kr(forgettingDistance.linexp(0, 1.0, 0.05, 0.2)));
         timescale = TRand.kr(1.0, forgettingDistance.linlin(0, 1.0, 0.5, 2.83), trig);
         pitchenv = EnvGen.kr(Env([1, 1, 0.5], [0, 3], [0, \exp]), gate: trig, timeScale: timescale);
         modenv = EnvGen.kr(Env([0,0,1,0.8,0.8,0],[0,0.8,0.2,0.5,1.5]), gate: trig, timeScale: timescale);
         forgettor = PMOsc.ar(TExpRand.kr(55, 100.0, trig.dup), TExpRand.kr(30.0, 50, trig.dup) * pitchenv, modenv, mul: modenv.squared * 0.2).softclip + LPF.ar(BrownNoise.ar(0.4.dup), TExpRand.kr(80, 140.0, trig.dup), modenv);
-        Out.ar(out, (modenv.squared * forgettor * 0.6 + (1 - modenv * IFFT(chain))) * amp.lag(0.1));
+        outMix = TBetaRand.kr(0.5, 1.0, 1.0, 0.25, Dust.kr(0.6)).lag(1);
+        Out.ar(out,
+            (modenv.squared * forgettor * 0.6
+                + (1 - modenv * (i2 * (1 - outMix) + (IFFT(chain) * 1.5 * outMix).softclip)))
+            * amp.lag(0.1));
     }).send(s);
 });
-
 SynthDef(\talkySquid, {|freq=44100, grain=1.0, pan=0, amp=1, rscale=1,nrate=5,mrate=4,recBuf = 0, out=72|
     var sig,wup,squaryness;
     wup=TExpRand.kr(0.01, 0.175, trig: Dust.kr(mrate * 2));
