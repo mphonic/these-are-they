@@ -46,7 +46,7 @@
     ~getEventDurations = {|self, durations|
         var ds, waitdur;
         ds = durations.at(durations.order({|a, b| b < a }));
-        waitdur = ds[rrand(0, 3).round] + exprand(0.01, 3);
+        waitdur = ds[rrand(0, 2).round] + exprand(0.01, 3);
         [ds[0], waitdur];
     };
     ~getModStartsAndEnds = {|self, minsize = 1, maxsize = 10|
@@ -55,7 +55,7 @@
             msf = { rrand(0, ws.fracXings.size - maxsize - 1) };
             mef = {|st| st + [rrand(minsize, maxsize - 2), rrand(minsize + 3, maxsize)].wchoose([0.7, 0.3]) };
         }, {
-            msf = rrand(0, ws.fracXings.size - 10);
+            msf = rrand(0, ws.fracXings.size - maxsize);
             mef = msf + [rrand(minsize, maxsize - 2), rrand(minsize + 3, maxsize)].wchoose([0.7, 0.3]);
         });
         [msf, mef];
@@ -78,55 +78,64 @@
         var durations, totaldur, outdur, mrf, wf, amp, hmul;
         self.foiring.add(1);
         self.loadWavesets();
-        ((self.didUnison * 0.1 + 0.367).coin).if({
-            mrf = { betarand(0.0004, 0.006, 0.1, 0.3) * [1, 0.5].wchoose([0.9, 0.1]) };
-            wf = { [0, rrand(0.1, 0.67)].wchoose([0.6, 0.4]) };
+        ((self.didUnison * 0.1 + 0.15).coin).if({
+            mrf = { betarand(0.0004, 0.001, 0.2, 0.3) * [1, 0.5].wchoose([0.9, 0.1]) };
+            wf = { [rrand(0, 0.333), rrand(0.1, 0.67)].wchoose([0.6, 0.4]) };
             amp = 1;
             hmul = [1, rrand(1.8, 3.0)].wchoose([0.86, 0.14]);
             self.didUnison = 0;
         }, {
-            mrf = betarand(0.0004, 0.0047, 0.1, 0.3) * [1, 0.5].wchoose([0.9, 0.1]);
+            mrf = betarand(0.0004, 0.001, 0.2, 0.3) * [1, 0.5].wchoose([0.9, 0.1]);
             wf = 0;
             amp = 0.6;
-            hmul = [rrand(1.8, 3.6), rrand(3.6, 5.0)].wchoose([0.9, 0.1]);
+            hmul = [rrand(1.8, 3.6), rrand(2.5, 4.2)].wchoose([0.9, 0.1]);
             self.didUnison = 1;
         });
-        durations = self.generateDurations(minnum, maxnum, mindur, maxdur) * hmul;
+        durations = self.generateDurations(minnum, max(maxnum * self.didUnison, maxnum * 0.5), mindur, maxdur) * hmul;
         #totaldur, outdur = self.getEventDurations(durations);
         {
             totaldur.wait;
             self.foiring.pop;
         }.fork;
         {
-            var msf, mef, x;
+            var asf, aef, fsf, fef, x;
             self.wavesetCondition.wait;
             x = self.waveset;
             // rrand(0.0, 1).wait;
-            #msf, mef = self.getModStartsAndEnds(1, 10);
+            #asf, aef = self.getModStartsAndEnds(6, 20);
+            #fsf, fef = self.getModStartsAndEnds(6, 20);
             durations.do({|e, c|
-                var modstart = msf.value(),
-                modend = mef.value(modstart),
-                modrate = mrf.value(),
+                var amodstart = asf.value(),
+                amodend = aef.value(amodstart),
+                fmodstart = fsf.value(),
+                fmodend = fef.value(fmodstart),
+                modrate = amodend - amodstart * 0.5 * mrf.value(),
                 moddur,
                 starts,
                 ends,
+                rates,
                 dur;
                 #starts, ends = self.getWaveformStartsAndEnds(4, 3, 10);
-                moddur = modend - modstart / self.buf.sampleRate / modrate;
-                dur = (e / moddur).round * moddur;
-                self.playSynth([
-                    \out, self.out,
-                    \buf, self.buf,
-                    \modfreq, modrate * [-1, 1].choose,
-                    \modstart, x.fracXings[modstart],
-                    \modend, x.fracXings[modend],
-                    \starts, starts,
-                    \ends, ends,
-                    \amp, amp,
-                    \dur, dur,
-                    \dec, self.getDecay(),
-                    \rates, Array.fill(4, { betarand(0.005, 1.8, 0.2, 1.0) * [-1, 1].choose([0.4, 0.6]) })
-                ]);
+                moddur = x.fracXings[amodend] - x.fracXings[amodstart] / self.buf.sampleRate / modrate;
+                dur = max((e / moddur).round * moddur, moddur);
+                rates = Array.fill(4, { betarand(0.005, 1.8, 0.2, 1.0) * [-1, 1].choose([0.4, 0.6]) });
+                (dur > 0).if({
+                    self.playSynth([
+                        \out, self.out,
+                        \buf, self.buf,
+                        \arf, modrate * [-1, 1].choose,
+                        \astart, x.fracXings[amodstart],
+                        \aend, x.fracXings[amodend],
+                        \fstart, x.fracXings[fmodstart],
+                        \fend, x.fracXings[fmodend],
+                        \starts, starts,
+                        \ends, ends,
+                        \amp, amp,
+                        \dur, dur,
+                        \dec, self.getDecay(),
+                        \rates, rates
+                    ]);
+                });
                 wf.value.wait;
             });
         }.fork;

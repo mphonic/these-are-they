@@ -131,7 +131,7 @@ s.waitForBoot({
         ~foire.getDecay = {|self|
             betarand(0.06,1.3,0.2,1);
         };
-        ~foire.synthName = \bitOBuf;
+        ~foire.synthName = \bitOBufFreq;
         ~foire.playSynth = {|self, args|
             Synth.grain(self.synthName, args ++ [\shapeBuf, ~tatBufs.distort.choose.bufnum]);
         };
@@ -253,7 +253,12 @@ s.waitForBoot({
                                 }.fork;
                             });
                         }, {
-                            ((dudeAmp >= 0.8) && 0.1.coin).if({ { 1.wait; synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum); }.fork });
+                            ((dudeAmp >= 0.8) && 0.1.coin).if({
+                                {
+                                    1.wait;
+                                    synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum);
+                                }.fork;
+                            });
                         });
                         // maybe spit out the recorded buffer or change the talkers
                         // foire if the irriation is high enough
@@ -312,7 +317,8 @@ s.waitForBoot({
                                     }.fork;
                                 }, {
                                     // going to foire
-                                    waittime = ~foire.go(2 * ~numChans, 8 * ~numChans, irritation * 1.9, irritation * 20);
+                                    ~foire.synthName = [\bitOBuf, \bitOBufFreq].wchoose([0.1, 0.9]);
+                                    waittime = ~foire.go(~numChans, 6 * ~numChans / (~foire.foiring.size + 1), irritation, irritation * 12);
                                     // maybe mouths too
                                     /*(0.25.coin).if({
                                         ~mouths.go(rrand(2, 4), waittime * 0.3, waittime * 0.9);

@@ -28,7 +28,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         var a, b, amp, changer, ch, at;
         changer = Gendy5.kr(minfreq: 0.1 * rmul, maxfreq: 1.2 * rmul).clip2(1.0).range(-120.0, 120);
         ch = HPZ1.kr(changer);
-        at = Dust.kr(1.9 * rmul);
+        at = Dust.kr(1.71.ring1(LFNoise0.kr(1, 0.22)) * rmul);
         a=VOsc.ar(rootbuf + Gendy1.kr(minfreq: 0.06.dup(~numChans), maxfreq: 0.7.dup(~numChans), ampscale: 0.1, knum: 8).clip2(1.0).range(0, 31), (TIRand.kr(15, 59, at).midicps * fmul).lag(0.1), mul: EnvGen.kr(Env([0,1,1,0], [0.067, TWChoose.kr(at, [0.3,0.2,0.1],[0.8, 0.1, 0.1]), 0.3]), at) * 0.4);
         b=a/4+LocalIn.ar(~numChans);
         b=LeakDC.ar(if(TExpRand.kr(0.01,1,at), FreqShift.ar(b,changer), b));
@@ -96,7 +96,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         var a, b, amp, changer, ch, at;
         changer = Gendy5.kr(minfreq: 0.1 * rmul, maxfreq: 1.2 * rmul).clip2(1.0).range(-120.0, 120);
         ch = HPZ1.kr(changer);
-        at = Dust.kr(1.9 * rmul);
+        at = Dust.kr(1.71.ring1(LFNoise0.kr(1, 0.22)) * rmul);
         a=VOsc.ar(rootbuf + Gendy1.kr(minfreq: 0.06.dup(~numChans), maxfreq: 0.7.dup(~numChans), ampscale: 0.1, knum: 8).clip2(1.0).range(0, 31), (TIRand.kr(15, 59, at).midicps * fmul).lag(0.1), mul: EnvGen.kr(Env([0,1,1,0], [0.067, TWChoose.kr(at, [0.3,0.2,0.1],[0.8, 0.1, 0.1]), 0.3]), at) * 0.4);
         b=a/4+LocalIn.ar(~numChans);
         b=LeakDC.ar(if(TExpRand.kr(0.01,1,at), FreqShift.ar(b,changer), b));
@@ -267,17 +267,34 @@ SynthDef(\bufbuf1, {|out = 0, buf = 0, rate = 1, at = 0.01, dur = 1, dec = 0.1, 
     Out.ar(out, PanAz.ar(~numChans, sample, panT) * amp);
 }).send(s);
 
-SynthDef(\bitOBuf, {|out = 0, buf, modfreq, modstart, modend, rates = #[0,0,0,0], starts = #[0,0,0,0], ends = #[0,0,0,0], amp, dur=1, dec = 1, shapeBuf|
+SynthDef(\bitOBuf, {|out = 0, buf, arf, astart, aend, rates = #[0,0,0,0], starts = #[0,0,0,0], ends = #[0,0,0,0], amp, dur=1, dec = 1, shapeBuf|
     var amod, sig, env;
     amod = BufRd.kr(1, buf,
-        Phasor.ar(0, modfreq * BufRateScale.kr(buf), modstart, modend)) * Rand(1.0, 2.0);
+        Phasor.ar(0, arf * BufRateScale.kr(buf), astart, aend)) * Rand(1.0, 2.0);
     env = EnvGen.kr(Env([0, 1, 1, 0], [Rand(0.067,1),dur,dec], [-3, 0, 2]), doneAction: 2);
     sig = Mix.fill(4, {|i|
         BufRd.ar(1, buf,
             Phasor.ar(0, (rates[i]).ring1(amod) * BufRateScale.kr(buf) * TWChoose.kr(Impulse.kr((dur + 3).reciprocal), [env, 1], [0.1, 0.9]), starts[i], ends[i])) * 0.333
     }).ring1(amod) * Rand(0.83, 0.975).squared * amp;
     sig = LeakDC.ar(Shaper.ar(shapeBuf, LeakDC.ar(sig)));
-    Out.ar(out, PanAz.ar(~numChans, sig * env, Rand(-1.0, 1.0), 0.7).softclip);
+    sig = Compander.ar(sig, sig, 0.333, 1, 0.25, 0.01, 0.05, mul: 1.5);
+    Out.ar(out, PanAz.ar(~numChans, sig * env, Rand(-1.0, 1.0)).softclip);
+}).send(s);
+
+SynthDef(\bitOBufFreq, {|out = 0, buf, arf, astart, aend, fstart, fend, rates = #[0,0,0,0], starts = #[0,0,0,0], ends = #[0,0,0,0], amp, dur=1, dec = 1, shapeBuf|
+	var amod, fmod, sig, env;
+	amod = BufRd.kr(1, buf,
+        		Phasor.ar(0, arf * BufRateScale.kr(buf), astart, aend)) * Rand(1.0, 2.0);
+    fmod = BufRd.kr(1, buf,
+        		Phasor.ar(0, arf * BufRateScale.kr(buf), fstart, fend));
+    env = EnvGen.kr(Env([0, 1, 1, 0], [Rand(0.067,1),dur,dec], [-3, 0, 2]), doneAction: 2);
+    sig = Mix.fill(4, {|i|
+        BufRd.ar(1, buf,
+            Phasor.ar(0, (rates[i]).ring1(fmod) * BufRateScale.kr(buf) * TWChoose.kr(Impulse.kr((dur + 3).reciprocal), [env, 1], [0.1, 0.9]), starts[i], ends[i])) * 0.333
+    }).ring1(amod) * Rand(0.83, 0.975).squared * amp;
+    sig = LeakDC.ar(Shaper.ar(shapeBuf, sig));
+    sig = Compander.ar(sig, sig, 0.333, 1, 0.25, 0.01, 0.05, mul: 1.5);
+	Out.ar(out, PanAz.ar(~numChans, sig * env, Rand(-1.0, 1.0)).softclip);
 }).send(s);
 
 /*SynthDef(\mouth, {|amp=1, f=3305, fr=0.25, fd=0.2, ar=4, ad=0.9, a=0.1, b=0.1, c=0.2, d=0.2, dur = 1, gate=1, fade=3, pan=0, shapeBuf=0, out=0|
