@@ -94,12 +94,12 @@ s.waitForBoot({
         ];
 
         // re-cue bombas and ludes
-        ~tatBufs.bombas.do({|e, c|
-            e.cueSoundFile(e.path);
-        });
-        ~tatBufs.ludes.do({|e, c|
-            e.cueSoundFile(e.path);
-        });
+		~tatBufs.bombas.do({|e, c|
+			e.cueSoundFile(e.path, 0);
+		});
+		~tatBufs.ludes.do({|e, c|
+			e.cueSoundFile(e.path, 0);
+		});
 
         // load the foire, mouths, and chipper modules
         (~docDir ++ "/modules/foire.scd").loadPaths();
