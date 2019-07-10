@@ -45,11 +45,11 @@ s.waitForBoot({
             \talker -> 0,
             \lude -> 0,
             \mouth -> 0,
+			\bomba -> 0,
             // these have internal routing, so just be aware of where you're sending them
             \sticker1 -> 36,
             \sticker2 -> 38,
-            \engine -> 32,
-            \bomba -> 56
+            \engine -> 32
         ];
 
         // output busses if you're doing some external mixing, for instance
@@ -57,15 +57,15 @@ s.waitForBoot({
         \saddy -> 2,
         \foire -> 4,
         \spitter -> 8,
-        \chipper -> 6,
+        \chipper -> 10,
         \talker -> 0,
-        \lude -> 0,
+        \lude -> 12,
         \mouth -> 0,
+        \bomba -> 14,
         // these have internal routing, so just be aware of where you're sending them
         \sticker1 -> 36,
         \sticker2 -> 38,
-        \engine -> 32,
-        \bomba -> 56
+        \engine -> 32
         ];*/
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel

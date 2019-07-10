@@ -1,9 +1,7 @@
 // the synthdefs
 SynthDef(\recordIt, {|in = 0, bombin = 56, run = 0, recBuf = 0|
-    var sig = In.ar(in, ~numChans), bomba = In.ar(bombin, ~numChans);
-    sig = Compander.ar(sig, bomba, 0.1, 1, 0.1, 0.3, 0.5);
+    var sig = In.ar(in, ~numChans);
     RecordBuf.ar(MoogFF.ar(sig, Gendy4.kr(minfreq: 0.01, maxfreq: 0.1).clip2(1.0).exprange(400, 8000.0), LFNoise2.kr(0.2).range(0.7, 3.0), mul: 2.0), recBuf, 0, 0.5, 0.6, run, loop: 1);
-    ReplaceOut.ar(0, sig + bomba);
 }).send(s);
 
 SynthDef(\spitter, {|out = 0, shapeBuf, buf|
