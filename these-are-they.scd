@@ -156,7 +156,7 @@ s.waitForBoot({
                 self.ludeing = true;
                 // play the lude
                 {
-                    var d = DiskIn.ar(b.numChannels, b.bufnum, 1) * -3.7.dbamp;
+                    var d = DiskIn.ar(b.numChannels, b.bufnum) * -3.7.dbamp;
                     FreeSelfWhenDone.kr(d);
                     d
                 }.play(s, self.out);
