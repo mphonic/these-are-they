@@ -95,9 +95,11 @@ s.waitForBoot({
 
         // re-cue bombas and ludes
 		~tatBufs.bombas.do({|e, c|
+			e.close;
 			e.cueSoundFile(e.path, 0);
 		});
 		~tatBufs.ludes.do({|e, c|
+			e.close;
 			e.cueSoundFile(e.path, 0);
 		});
 
@@ -154,7 +156,7 @@ s.waitForBoot({
                 self.ludeing = true;
                 // play the lude
                 {
-                    var d=DiskIn.ar(b.numChannels, b.bufnum) * -3.7.dbamp;
+                    DiskIn.ar(b.numChannels, b.bufnum, 1) * -3.7.dbamp;
                     FreeSelfWhenDone.kr(d);
                     d
                 }.play(s, self.out);
@@ -184,7 +186,6 @@ s.waitForBoot({
                     synths[\uncommon].run(true);
                     synths[\sonk].run(true);
                     synths[\sonk].set(\bufnum, streams[\sonks].next.bufnum);
-                    b.free;
                     holdIt = false;
                 }.fork;
             });

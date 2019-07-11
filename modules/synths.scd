@@ -27,9 +27,9 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         changer = Gendy5.kr(minfreq: 0.1 * rmul, maxfreq: 1.2 * rmul).clip2(1.0).range(-120.0, 120);
         ch = HPZ1.kr(changer);
         at = Dust.kr(1.71.ring1(LFNoise0.kr(1, 0.22)) * rmul);
-        a=VOsc.ar(rootbuf + Gendy1.kr(minfreq: 0.06.dup(~numChans), maxfreq: 0.7.dup(~numChans), ampscale: 0.1, knum: 8).clip2(1.0).range(0, 31), (TIRand.kr(15, 59, at).midicps * fmul).lag(0.1), mul: EnvGen.kr(Env([0,1,1,0], [0.067, TWChoose.kr(at, [0.3,0.2,0.1],[0.8, 0.1, 0.1]), 0.3]), at) * 0.4);
+		a=LeakDC.ar(VOsc.ar(rootbuf + Gendy1.kr(minfreq: 0.06.dup(~numChans), maxfreq: 0.7.dup(~numChans), ampscale: 0.1, knum: 8).clip2(1.0).range(0, 31), (TIRand.kr(15, 59, at).midicps * fmul).lag(0.1), mul: EnvGen.kr(Env([0,1,1,0], [0.067, TWChoose.kr(at, [0.3,0.2,0.1],[0.8, 0.1, 0.1]), 0.3]), at) * 0.4));
         b=a/4+LocalIn.ar(~numChans);
-        b=LeakDC.ar(if(TExpRand.kr(0.01,1,at), FreqShift.ar(b,changer), b));
+        b=if(TExpRand.kr(0.01,1,at), FreqShift.ar(b,changer), b);
         amp = Amplitude.kr([b[0], b[1]].mean, 0.1, 0.1);
         SendTrig.kr(amp < 0.000008, 1000, amp);
         // b = Splay.ar(b, LFNoise2.kr(0.5).range(0, 1));
@@ -69,7 +69,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         var i1, i2, ramp, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor, outMix;
         ramp = Line.kr(0, 1.0, 1);
         i1 = In.ar(in1, ~numChans) * ramp * 2;
-        i2 = In.ar(in2, ~numChans) * ramp;
+		i2 = In.ar(in2, ~numChans) * ramp;
         RecordBuf.ar(i2.mean, recBuf, loop: 1);
         i2 = i2 * EnvDetect.ar(i1, 0.01, 0.1) + (i2 * 0.3);
         i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 10, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.083);
@@ -95,9 +95,9 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         changer = Gendy5.kr(minfreq: 0.1 * rmul, maxfreq: 1.2 * rmul).clip2(1.0).range(-120.0, 120);
         ch = HPZ1.kr(changer);
         at = Dust.kr(1.71.ring1(LFNoise0.kr(1, 0.22)) * rmul);
-        a=VOsc.ar(rootbuf + Gendy1.kr(minfreq: 0.06.dup(~numChans), maxfreq: 0.7.dup(~numChans), ampscale: 0.1, knum: 8).clip2(1.0).range(0, 31), (TIRand.kr(15, 59, at).midicps * fmul).lag(0.1), mul: EnvGen.kr(Env([0,1,1,0], [0.067, TWChoose.kr(at, [0.3,0.2,0.1],[0.8, 0.1, 0.1]), 0.3]), at) * 0.4);
+		a=LeakDC.ar(VOsc.ar(rootbuf + Gendy1.kr(minfreq: 0.06.dup(~numChans), maxfreq: 0.7.dup(~numChans), ampscale: 0.1, knum: 8).clip2(1.0).range(0, 31), (TIRand.kr(15, 59, at).midicps * fmul).lag(0.1), mul: EnvGen.kr(Env([0,1,1,0], [0.067, TWChoose.kr(at, [0.3,0.2,0.1],[0.8, 0.1, 0.1]), 0.3]), at) * 0.4));
         b=a/4+LocalIn.ar(~numChans);
-        b=LeakDC.ar(if(TExpRand.kr(0.01,1,at), FreqShift.ar(b,changer), b));
+        b=if(TExpRand.kr(0.01,1,at), FreqShift.ar(b,changer), b);
         amp = Amplitude.kr([b[0], b[1]].mean, 0.1, 0.1);
         SendTrig.kr(amp < 0.000008, 1000, amp);
         b = Splay.ar(b, LFNoise2.kr(0.5).range(0, 1));
@@ -137,7 +137,7 @@ SynthDef(\spitter, {|out = 0, shapeBuf, buf|
         var i1, i2, ramp, chain1, chain2, chain, trig, timescale, pitchenv, modenv, forgettor, outMix;
         ramp = Line.kr(0, 1.0, 1);
         i1 = In.ar(in1, ~numChans) * ramp * 2;
-        i2 = In.ar(in2, ~numChans) * ramp;
+		i2 = In.ar(in2, ~numChans) * ramp;
         RecordBuf.ar(i2.mean, recBuf, loop: 1);
         i2 = i2 * EnvDetect.ar(i1, 0.01, 0.1) + (i2 * 0.3);
         i1 = Compander.ar(i1, i1, 0.11, slopeBelow: 5, slopeAbove: 1, clampTime: 0.01, relaxTime: 0.083);
@@ -210,9 +210,10 @@ SynthDef(\bufSticker, {|out = 36, bufnum, amp = 1, rate = 1, pan = 0, repRate = 
     trigem = Impulse.kr(repRate);
     read = Phasor.ar(trigem, BufRateScale.kr(bufnum) * rate, 0, BufFrames.kr(bufnum), resetPos);
     LocalOut.ar(read);
-    sig=DelayC.ar(BufRd.ar(1, bufnum, read, 1, 4), 0.067, 0.067) * (1 - trigem).lag(0.067);
-    // smear = Mix(FreqShift.ar(sig, { ExpRand(20, 440.0) * TChoose.kr(Impulse.kr(0), [-1, 1]) }.dup(4), mul: 0.4));
-    smear = SMS.ar(sig, noisefloor: 0.05, freqmult: LFNoise0.kr(0.2).range(-12, 12).midiratio, formantpreserve: 1);
+    sig=BufRd.ar(1, bufnum, read, 1, 4) * (1 - trigem).lag(0.067);
+    //smear = Mix(FreqShift.ar(sig, { ExpRand(20, 440.0) * TChoose.kr(Dust.kr(0.1), [-1, 1]) }.dup(4), mul: 0.4));
+    smear = SMS.ar(sig, noisefloor: 0.05, freqmult: LFNoise0.kr(0.2).range(-12, 12).midiratio, formantpreserve: 1) *
+	EnvGen.kr(Env([0, 0, 1], [0.25, 0.1]));
     smear = HPF.ar(if(LFNoise1.kr(LFNoise0.kr(0.3).exprange(0.15, 0.45)).exprange(0.1, 1.0), sig, smear[1] * LFNoise1.kr(0.1).range(0.2, 0.4) + smear[0] * 4), 80);
     Out.ar(out,
         Pan2.ar(
