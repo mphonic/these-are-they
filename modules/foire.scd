@@ -24,7 +24,7 @@
     ~getEventDurations = {|self, durations|
         var ds, waitdur;
         ds = durations.at(durations.order({|a, b| b < a }));
-        waitdur = ds[rrand(0, 2).round] + exprand(0.01, 3);
+		waitdur = ds.foldAt(rrand(0, 2).round) + exprand(0.01, 3);
         [ds[0], waitdur];
     };
     ~getModStartsAndEnds = {|self, minsize = 1, maxsize = 10, ws|
