@@ -30,20 +30,20 @@
         var tmul = [1, rrand(1.25, 2.0)].wchoose([0.9, 0.1]),
         cb = self.chipBufs;
         exprand(1, 7).round.do({
-            var buf, syn;
+            var p, syn;
             (self.loadChip.not).if({
-                buf = self.pathStream.next;
+                p = self.pathStream.next;
             }, {
-                buf = self.lastChip;
+                p = self.lastChip;
             });
-            (buf != self.lastChip).if({
+            (p != self.lastChip).if({
                 {
                     s.sync;
                     self.loadChip = true;
-                    Buffer.read(s, buf, action: {|b|
+                    Buffer.read(s, p, action: {|b|
                         cb.add(b);
                         self.loadChip = false;
-                        self.lastChip = buf;
+                        self.lastChip = p;
                         (b.numChannels == 2).if({ syn = self.bufSynthStereo.value }, { syn = self.bufSynthMono.value });
                         self.playSynth(
                             syn,
@@ -85,21 +85,17 @@
         });
     };
     ~cleanUp = {|self, bufnum|
-        self.chipBufs.do({|e, c|
-            (bufnum == e.bufnum).if({
-                ((e.path != self.lastChip).and(self.spentChips.indexOf(c).isNil)).if({
-                    self.spentChips.add(c);
-                });
-            });
-        });
-        (self.spentChips.size > 7).if({
-            self.chipBufs.do({|e, c|
-                (c < (self.spentChips.size - 1)).if({
-                    self.chipBufs.at(c).free;
-                });
-            });
-			self.chipBufs = self.chipBufs.select({|e, c| c >= (self.spentChips.size - 1); });
-            self.spentChips = List[self.spentChips[self.spentChips.size - 1]];
+		var targetBuf = self.chipBufs.detect({|e| bufnum == e.bufnum });
+		(targetBuf.notNil).if({
+			(self.spentChips.indexOf(targetBuf.path).isNil).if({
+				self.spentChips.add(targetBuf.path);
+			});
+		});
+        (self.spentChips.size > 3).if({
+			var lastIndex = self.spentChips.lastIndex - 1;
+			self.chipBufs.copyRange(0, lastIndex).do({|e| e.free });
+			self.chipBufs = self.chipBufs.copyRange(lastIndex + 1, self.chipBufs.lastIndex);
+            self.spentChips = List[self.spentChips.pop];
         });
     };
 });
