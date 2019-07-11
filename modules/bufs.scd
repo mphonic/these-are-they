@@ -24,9 +24,7 @@ s.sync;
     \recEngines -> Buffer.alloc(s, s.sampleRate * 4, ~numChans),
     \recChipper -> Buffer.alloc(s, s.sampleRate * 4, 1),
     \recTalkers -> Buffer.alloc(s, s.sampleRate * 4, 1),
-    \recAll -> Buffer.alloc(s, s.sampleRate * 4, ~numChans),
-    \waveset1 -> Buffer.alloc(s, s.sampleRate * 4, 1),
-    \waveset2 -> Buffer.alloc(s, s.sampleRate * 4, 1)
+    \recAll -> Buffer.alloc(s, s.sampleRate * 4, ~numChans)
 ];
 
 ~tatBufs.sonks = (~docDir ++ "/audio/sonks/*")

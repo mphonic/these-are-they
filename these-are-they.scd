@@ -110,21 +110,12 @@ s.waitForBoot({
         ~foire.out = outs[\foire];
         // customize some things
         ~foire.sourceProb = 0.8;
-        ~foire.getWavesetBuf = {|self|
-            var buf;
-            (self.foiring.size.even).if({
-                buf = ~tatBufs.rec[\waveset1];
-            }, {
-                buf = ~tatBufs.rec[\waveset2];
-            });
-            buf;
-        };
-        ~foire.copySourceBuf = {|self|
+        ~foire.copySourceBuf = {|self, buf|
             (self.sourceProb.coin).if({
-                ~tatBufs.rec[\recChipper].copyData(self.buf);
+                ~tatBufs.rec[\recChipper].copyData(buf);
                 self.sourceProb = (self.sourceProb * 0.925).max(0.4);
             }, {
-                ~tatBufs.rec[\recTalkers].copyData(self.buf);
+                ~tatBufs.rec[\recTalkers].copyData(buf);
                 self.sourceProb = (self.sourceProb * 1.1).min(0.9);
             });
         };

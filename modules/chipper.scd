@@ -92,13 +92,13 @@
                 });
             });
         });
-        (self.spentChips.size > 3).if({
-            self.spentChips.do({|e, c|
+        (self.spentChips.size > 7).if({
+            self.chipBufs.do({|e, c|
                 (c < (self.spentChips.size - 1)).if({
                     self.chipBufs.at(c).free;
-                    self.chipBufs.removeAt(c);
                 });
             });
+			self.chipBufs = self.chipBufs.select({|e, c| c >= (self.spentChips.size - 1); });
             self.spentChips = List[self.spentChips[self.spentChips.size - 1]];
         });
     };
