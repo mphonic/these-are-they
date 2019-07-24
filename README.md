@@ -8,7 +8,7 @@ To hear some realizations of music created with "These are They" and to learn mo
 ### What you need
 To run "These are They", you need [SuperCollider](http://supercollider.github.io/download.html). You will also need to install SC3 Plugins: [Mac](https://github.com/supercollider/sc3-plugins/releases), [Win](http://supercollider.github.io/download.html), [Linux](https://github.com/supercollider/sc3-plugins/releases), [Source](https://github.com/supercollider/sc3-plugins). Follow directions in the appropriate package for installation. 
 
-Once SuperCollider and SC3 Plugins are installed, you'll need to add the Wavesets Quark. Open SuperCollider and enter
+Once SuperCollider and SC3 Plugins are installed, you'll need to add the Wavesets Quark. If you don't already have [Git](https://git-scm.com/downloads) installed, do that first. Then, open SuperCollider and enter
 
 ```
 Quarks.gui
