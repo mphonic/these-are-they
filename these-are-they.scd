@@ -30,14 +30,14 @@ s.waitForBoot({
     go = {
         // holdIt pauses "listening" for silences, slowing down the stream of "reactions"
         // governor modifies the probability of reactions and can also serve to slow them down
-        // irritation is the probability of a "foire" occuring durring an engine silence
+        // irritation is the probability of a "foire" occuring during an engine silence
         // its value also affects the length of a foire event
         var synths, streams, bomba, outs, holdIt = true, irritation=0.164, governor = 1, forgettingPhase = 0;
         "Off we go".postln;
         forgettingPhase = 1.5 * pi;
 
         // output busses for the synths
-        outs = Dictionary[
+/*        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -50,10 +50,10 @@ s.waitForBoot({
             \sticker1 -> 36,
             \sticker2 -> 38,
             \engine -> 32
-        ];
+        ];*/
 
         // output busses if you're doing some external mixing, for instance
-/*        outs = Dictionary[
+        outs = Dictionary[
         \saddy -> 2,
         \foire -> 4,
         \spitter -> 8,
@@ -66,7 +66,7 @@ s.waitForBoot({
         \sticker1 -> 36,
         \sticker2 -> 38,
         \engine -> 32
-        ];*/
+        ];
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
@@ -139,7 +139,7 @@ s.waitForBoot({
         // chipper is a system for launching bursts of short samples
         ~chipper.out = outs[\chipper];
         ~chipper.resetPathStream(~tatBufs.chipPaths);
-        ~chipper.threshold = rrand(50, 81);
+        ~chipper.threshold = rrand(48, 65);
         /*~chipper.bufSynthMono = \bufbuf1;
         ~chipper.bufSynthStereo = \bufbuf2;*/
 
