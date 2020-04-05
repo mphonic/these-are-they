@@ -37,7 +37,7 @@ s.waitForBoot({
         forgettingPhase = 1.5 * pi;
 
         // output busses for the synths
-/*        outs = Dictionary[
+        outs = Dictionary[
             \saddy -> 0,
             \foire -> 0,
             \spitter -> 0,
@@ -50,10 +50,10 @@ s.waitForBoot({
             \sticker1 -> 36,
             \sticker2 -> 38,
             \engine -> 32
-        ];*/
+        ];
 
         // output busses if you're doing some external mixing, for instance
-        outs = Dictionary[
+ /*       outs = Dictionary[
         \saddy -> 2,
         \foire -> 4,
         \spitter -> 8,
@@ -66,7 +66,7 @@ s.waitForBoot({
         \sticker1 -> 36,
         \sticker2 -> 38,
         \engine -> 32
-        ];
+        ];*/
 
         (~numChans < 3).if({ // sticker2 should only be different from sticker1 if multichannel
             outs[\sticker2] = outs[\sticker1];
